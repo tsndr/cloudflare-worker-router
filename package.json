@@ -18,7 +18,8 @@
     "middleware",
     "router",
     "routing",
-    "worker"
+    "worker",
+    "workers"
   ],
   "author": "Tobias Schneider",
   "license": "MIT",
