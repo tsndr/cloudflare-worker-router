@@ -1,0 +1,29 @@
+{
+  "name": "@tsndr/cloudflare-worker-router",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsndr/cloudflare-worker-router.git"
+  },
+  "keywords": [
+    "cloudflare",
+    "cloudflare-worker",
+    "cloudflare-workers",
+    "express",
+    "expressjs",
+    "framework",
+    "middleware",
+    "router",
+    "routing",
+    "worker"
+  ],
+  "author": "Tobias Schneider",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tsndr/cloudflare-worker-router/issues"
+  },
+  "homepage": "https://github.com/tsndr/cloudflare-worker-router#readme"
+}
