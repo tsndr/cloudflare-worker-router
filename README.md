@@ -7,6 +7,7 @@ When I was trying out Cloudflare Workers I almost immediately noticed how fast i
 ## Contents
 
 - [Usage](#usage)
+- [Reference](#reference)
 - [Setup](#setup)
 
 
@@ -71,6 +72,63 @@ addEventListener('fetch', event => {
   event.respondWith(router.handle(event))
 })
 ```
+
+
+## Reference
+
+### `router.cors([config])`
+
+If enabled will overwrite other `OPTIONS` requests.
+
+#### `config` (object, optional)
+
+Key                    | Type      | Default Value
+---------------------- | --------- | -------------
+`allowOrigin`          | `string`  | `*`
+`allowMethods`         | `string`  | `*`
+`allowHeaders`         | `string`  | `*`
+`maxAge`               | `integer` | `86400`
+`optionsSuccessStatus` | `integer` | `204`
+
+
+### `router.all(url, [...handlers])`
+### `router.connect(url, [...handlers])`
+### `router.delete(url, [...handlers])`
+### `router.get(url, [...handlers])`
+### `router.head(url, [...handlers])`
+### `router.options(url, [...handlers])`
+### `router.patch(url, [...handlers])`
+### `router.post(url, [...handlers])`
+### `router.put(url, [...handlers])`
+### `router.trace(url, [...handlers])`
+
+#### `url` (string)
+
+The URL starting with a `/`.
+Supports the use of dynamic parameters, prefixed with a `:` (i.e. `/user/:userId/edit`) which will be available through the [`req`-Object](#req-object) (i.e. `req.params.userId`).
+
+#### `handlers` (function, optional)
+
+An unlimited number of functions getting [`req`](#req-object) and [`res`](#res-object) passed into them.
+
+
+### `req`-Object
+
+Key       | Type                | Description
+--------- | ------------------- | -----------
+`body`    | `object` / `string` | Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
+`headers` | `object`            | Object containing request headers
+`method`  | `string`            | String containing method
+`params`  | `object`            | Object containing all parameters defined in the url string
+
+
+### `res`-Object
+
+Key       | Type                | Description
+--------- | ------------------- | -----------
+`body`    | `object` / `string` | Either set an `object` (will be converted to JSON) or a string.
+`headers` | `object`            | An empty object you can set response headers in.
+`status`  | `integer`           | The return status code (default: `204`)
 
 
 ## Setup
