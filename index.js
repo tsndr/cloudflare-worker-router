@@ -1,49 +1,214 @@
+/**
+ * Router
+ * 
+ * @class
+ * @constructor
+ * @public
+ */
 class Router {
+
     constructor() {
+        /**
+         * Router Array
+         * 
+         * @protected
+         * @type {Route[]}
+         */
         this.routes = []
+
+        /**
+         * CORS Config
+         * 
+         * @protected
+         * @type {RouterCorsConfig}
+         */
         this.corsConfig = {}
     }
 
+    /**
+     * Route Object
+     * 
+     * @typedef Route
+     * @property {string} method HTTP request method
+     * @property {string} url URL String
+     * @property {RouterHandler[]} handlers Array of handler functions
+     */
+
+    /**
+     * Request Object
+     * 
+     * @typedef RouterRequest
+     * @property {string} method HTTP request method
+     * @property {Object<string, string>} params Object containing all parameters defined in the url string
+     * @property {Object<string, string>} headers Object containing request headers
+     * @property {Object<string, string>|string} body Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
+     */
+
+    /**
+     * Response Object
+     * 
+     * @typedef RouterResponse
+     * @property {Object<string, string>} headers Object you can set response headers in
+     * @property {number} status Return status code (default: `204`)
+     * @property {Object<string, string>|string} body Either an `object` (will be converted to JSON) or a string
+     */
+
+    /**
+     * Next Function
+     * 
+     * @callback RouterNext
+     * @returns {Promise}
+     */
+
+    /**
+     * Handler Function
+     * 
+     * @callback RouterHandler
+     * @param {Request} request
+     * @param {Response} response
+     * @param {next} next
+     */
+
+    /**
+     * Register CONNECT route
+     * 
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns 
+     */
     connect(url, ...handlers) {
         return this.register('CONNECT', url, handlers)
     }
 
+    /**
+     * Register DELETE route
+     * 
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns 
+     */
     delete(url, ...handlers) {
         return this.register('DELETE', url, handlers)
     }
 
+    /**
+     * Register GET route
+     * 
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns 
+     */
     get(url, ...handlers) {
         return this.register('GET', url, handlers)
     }
 
+    /**
+     * Register HEAD route
+     * 
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns 
+     */
     head(url, ...handlers) {
         return this.register('HEAD', url, handlers)
     }
 
+    /**
+     * Register OPTIONS route
+     * 
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns 
+     */
     options(url, ...handlers) {
         return this.register('OPTIONS', url, handlers)
     }
 
+    /**
+     * Register PATCH route
+     * 
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns 
+     */
     patch(url, ...handlers) {
         return this.register('PATCH', url, handlers)
     }
 
+    /**
+     * Register POST route
+     * 
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns 
+     */
     post(url, ...handlers) {
         return this.register('POST', url, handlers)
     }
 
+    /**
+     * Register PUT route
+     * 
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns 
+     */
     put(url, ...handlers) {
         return this.register('PUT', url, handlers)
     }
 
+    /**
+     * Register TRACE route
+     * 
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns 
+     */
     trace(url, ...handlers) {
         return this.register('TRACE', url, handlers)
     }
 
-    all(url, ...handlers) {
+    /**
+     * Register route, ignoring method
+     * 
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns 
+     */
+    any(url, ...handlers) {
         return this.register('*', url, handlers)
     }
 
+    /**
+     * Register route, ignoring method
+     * 
+     * @deprecated since version 1.0.2, use .any(url, ...handlers) instead.
+     * @param {string} url 
+     * @param  {...RouterHandler} handlers 
+     * @returns {Router}
+     */
+    all(url, ...handlers) {
+        console.warn('WARNING: This function is deprecated and will be removed in a future release, please use .any(url, ...handlers) instead.')
+        return this.any(url, handlers)
+    }
+
+    /**
+     * CORS Config
+     * 
+     * @typedef RouterCorsConfig
+     * @property {string} allowOrigin Access-Control-Allow-Origin (default: `*`)
+     * @property {string} allowMethods Access-Control-Allow-Methods (default: `*`)
+     * @property {string} allowHeaders Access-Control-Allow-Headers (default: `*`)
+     * @property {number} maxAge Access-Control-Max-Age (default: `86400`)
+     * @property {number} optionsSuccessStatus Return status code for OPTIONS request (default: `204`)
+     */
+
+    /**
+     * Enable CORS support
+     * 
+     * @param {RouterCorsConfig} config
+     * @returns {Router}
+     */
     cors(config) {
         config = config || {}
         this.corsConfig = {
@@ -56,6 +221,15 @@ class Router {
         return this
     }
 
+    /**
+     * Register route
+     * 
+     * @private
+     * @param {string} method HTTP request method
+     * @param {string} url URL String
+     * @param {RouterHandler[]} handlers Arrar of handler functions
+     * @returns {Router}
+     */
     register(method, url, handlers) {
         this.routes.push({
             method,
@@ -65,6 +239,13 @@ class Router {
         return this
     }
 
+    /**
+     * Get Route by request
+     * 
+     * @private
+     * @param {Request} request 
+     * @returns {Route|undefined}
+     */
     getRoute(request) {
         const urlArr = (new URL(request.url)).pathname.split('/').filter(i => i)
         return this.routes.find(r => {
@@ -83,6 +264,12 @@ class Router {
         })
     }
 
+    /**
+     * Handle requests
+     * 
+     * @param {Event} event 
+     * @returns {Response}
+     */
     async handle(event) {
         const request = { headers: event.request.headers, method: event.request.method, url: event.request.url }
         request.params = []
@@ -147,6 +334,5 @@ class Router {
         })
     }
 }
-
 
 module.exports = Router

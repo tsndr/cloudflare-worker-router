@@ -91,7 +91,7 @@ Key                    | Type      | Default Value
 `optionsSuccessStatus` | `integer` | `204`
 
 
-### `router.all(url, [...handlers])`
+### `router.any(url, [...handlers])`
 ### `router.connect(url, [...handlers])`
 ### `router.delete(url, [...handlers])`
 ### `router.get(url, [...handlers])`
@@ -118,7 +118,7 @@ Key       | Type                | Description
 --------- | ------------------- | -----------
 `body`    | `object` / `string` | Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
 `headers` | `object`            | Object containing request headers
-`method`  | `string`            | String containing method
+`method`  | `string`            | HTTP request method
 `params`  | `object`            | Object containing all parameters defined in the url string
 
 
@@ -126,9 +126,9 @@ Key       | Type                | Description
 
 Key       | Type                | Description
 --------- | ------------------- | -----------
-`body`    | `object` / `string` | Either set an `object` (will be converted to JSON) or a string.
-`headers` | `object`            | An empty object you can set response headers in.
-`status`  | `integer`           | The return status code (default: `204`)
+`body`    | `object` / `string` | Either set an `object` (will be converted to JSON) or a string
+`headers` | `object`            | Object you can set response headers in
+`status`  | `integer`           | Return status code (default: `204`)
 
 
 ## Setup
