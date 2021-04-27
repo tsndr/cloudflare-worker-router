@@ -271,7 +271,7 @@ class Router {
      * @returns {Response}
      */
     async handle(event) {
-        const request = { headers: event.request.headers, method: event.request.method, url: event.request.url }
+        const request = { headers: event.request.headers, method: event.request.method, url: event.request.url, event: event }
         request.params = []
         if (request.method === 'OPTIONS' && Object.keys(this.corsConfig).length) {
             return new Response('', {
