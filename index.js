@@ -66,7 +66,7 @@ class Router {
      * @callback RouterHandler
      * @param {Request} request
      * @param {Response} response
-     * @param {next} next
+     * @param {RouterNext} next
      */
 
     /**
@@ -74,7 +74,7 @@ class Router {
      * 
      * @param {string} url 
      * @param  {...RouterHandler} handlers 
-     * @returns 
+     * @returns {Router}
      */
     connect(url, ...handlers) {
         return this.register('CONNECT', url, handlers)
@@ -85,7 +85,7 @@ class Router {
      * 
      * @param {string} url 
      * @param  {...RouterHandler} handlers 
-     * @returns 
+     * @returns {Router}
      */
     delete(url, ...handlers) {
         return this.register('DELETE', url, handlers)
@@ -96,7 +96,7 @@ class Router {
      * 
      * @param {string} url 
      * @param  {...RouterHandler} handlers 
-     * @returns 
+     * @returns {Router}
      */
     get(url, ...handlers) {
         return this.register('GET', url, handlers)
@@ -107,7 +107,7 @@ class Router {
      * 
      * @param {string} url 
      * @param  {...RouterHandler} handlers 
-     * @returns 
+     * @returns {Router}
      */
     head(url, ...handlers) {
         return this.register('HEAD', url, handlers)
@@ -118,7 +118,7 @@ class Router {
      * 
      * @param {string} url 
      * @param  {...RouterHandler} handlers 
-     * @returns 
+     * @returns {Router}
      */
     options(url, ...handlers) {
         return this.register('OPTIONS', url, handlers)
@@ -129,7 +129,7 @@ class Router {
      * 
      * @param {string} url 
      * @param  {...RouterHandler} handlers 
-     * @returns 
+     * @returns {Router}
      */
     patch(url, ...handlers) {
         return this.register('PATCH', url, handlers)
@@ -140,7 +140,7 @@ class Router {
      * 
      * @param {string} url 
      * @param  {...RouterHandler} handlers 
-     * @returns 
+     * @returns {Router}
      */
     post(url, ...handlers) {
         return this.register('POST', url, handlers)
@@ -151,7 +151,7 @@ class Router {
      * 
      * @param {string} url 
      * @param  {...RouterHandler} handlers 
-     * @returns 
+     * @returns {Router}
      */
     put(url, ...handlers) {
         return this.register('PUT', url, handlers)
@@ -162,7 +162,7 @@ class Router {
      * 
      * @param {string} url 
      * @param  {...RouterHandler} handlers 
-     * @returns 
+     * @returns {Router}
      */
     trace(url, ...handlers) {
         return this.register('TRACE', url, handlers)
@@ -173,7 +173,7 @@ class Router {
      * 
      * @param {string} url 
      * @param  {...RouterHandler} handlers 
-     * @returns 
+     * @returns {Router}
      */
     any(url, ...handlers) {
         return this.register('*', url, handlers)
