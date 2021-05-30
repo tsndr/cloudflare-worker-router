@@ -120,6 +120,7 @@ Key       | Type                | Description
 `headers` | `object`            | Object containing request headers
 `method`  | `string`            | HTTP request method
 `params`  | `object`            | Object containing all parameters defined in the url string
+`query`   | `object`            | Object containing all query parameters
 
 
 ### `res`-Object

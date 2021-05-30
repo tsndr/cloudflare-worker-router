@@ -40,6 +40,7 @@ class Router {
      * @typedef RouterRequest
      * @property {string} method HTTP request method
      * @property {Object<string, string>} params Object containing all parameters defined in the url string
+     * @property {Object<string, string>} query Object containing all query parameters
      * @property {Object<string, string>} headers Object containing request headers
      * @property {Object<string, string>|string} body Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
      */
@@ -247,19 +248,25 @@ class Router {
      * @returns {Route|undefined}
      */
     getRoute(request) {
-        const urlArr = (new URL(request.url)).pathname.split('/').filter(i => i)
+        const url = new URL(request.url)
+        const pathArr = url.pathname.split('/').filter(i => i)
         return this.routes.find(r => {
             const routeArr = r.url.split('/').filter(i => i)
-            if (![request.method, '*'].includes(r.method) || routeArr.length !== urlArr.length)
+            if (![request.method, '*'].includes(r.method) || routeArr.length !== pathArr.length)
                 return false
             const params = {}
             for (let i = 0; i < routeArr.length; i++) {
-                if (routeArr[i] !== urlArr[i] && routeArr[i][0] !== ':')
+                if (routeArr[i] !== pathArr[i] && routeArr[i][0] !== ':')
                     return false
                 if (routeArr[i][0] === ':')
-                    params[routeArr[i].substring(1)] = urlArr[i]
+                    params[routeArr[i].substring(1)] = pathArr[i]
             }
             request.params = params
+            const query = {}
+            for (const [k, v] of url.searchParams.entries()) {
+                query[k] = v
+            }
+            request.query = query
             return true
         })
     }
