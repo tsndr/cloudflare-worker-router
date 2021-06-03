@@ -15,6 +15,13 @@ declare class Router {
      */
     protected routes: Route[];
     /**
+     * Debug Mode
+     * 
+     * @protected
+     * @type {boolean}
+     */
+    protected debugMode: boolean = false;
+    /**
      * CORS Config
      *
      * @protected
@@ -160,6 +167,12 @@ declare class Router {
      * @property {number} maxAge Access-Control-Max-Age (default: `86400`)
      * @property {number} optionsSuccessStatus Return status code for OPTIONS request (default: `204`)
      */
+    /**
+     * Debug Mode
+     * 
+     * @param {boolean} state Whether to turn on or off debug mode (default: true)
+     */
+    debug(state: boolean = true): void
     /**
      * Enable CORS support
      *
