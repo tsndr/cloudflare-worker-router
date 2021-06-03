@@ -17,6 +17,14 @@ class Router {
         this.routes = []
 
         /**
+         * Debug Mode
+         * 
+         * @protected
+         * @type {boolean}
+         */
+        this.debugMode = false
+
+        /**
          * CORS Config
          * 
          * @protected
@@ -194,6 +202,15 @@ class Router {
     }
 
     /**
+     * Debug Mode
+     * 
+     * @param {boolean} state Whether to turn on or off debug mode (default: true)
+     */
+    debug(state = true) {
+        this.debugMode = state
+    }
+
+    /**
      * CORS Config
      * 
      * @typedef RouterCorsConfig
@@ -302,7 +319,7 @@ class Router {
         }
         const route = this.getRoute(request)
         if (!route) {
-            return new Response('', {
+            return new Response(this.debugMode ? 'Route not found!' : '', {
                 status: 404
             })
         }
@@ -327,8 +344,7 @@ class Router {
             }
             await runner(0)
         } catch(err) {
-            console.error(err)
-            return new Response('', {
+            return new Response(this.debugMode ? err.stack : '', {
                 status: 500
             })
         }
