@@ -81,6 +81,14 @@ addEventListener('fetch', event => {
 
 ## Reference
 
+### `router.debug([state])`
+
+Enable or disable debug mode. Which will return the `error.stack` in case of an exception instead of and empty `500` response. Debug mode is disabled by default.
+
+#### `state`
+State is a `boolean` which determines if debug mode should be enabled or not (default: `true`)
+
+
 ### `router.cors([config])`
 
 If enabled will overwrite other `OPTIONS` requests.
