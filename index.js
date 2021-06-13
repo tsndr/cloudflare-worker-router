@@ -349,7 +349,7 @@ class Router {
             })
         }
         const headers = Object.assign({ 'Content-Type': 'application/json' }, response.headers)
-        if (headers['Content-Type'] === 'application/json' && typeof response.body === 'object')
+        if (headers['Content-Type'].includes('json') && typeof response.body === 'object')
             response.body = JSON.stringify(response.body)
         return new Response(response.body, {
             status: response.status || (response.body ? 200 : 500),
