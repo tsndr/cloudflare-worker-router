@@ -1,4 +1,4 @@
-export = Router;
+export = Router
 /**
  * Router
  *
@@ -13,21 +13,21 @@ declare class Router {
      * @protected
      * @type {Route[]}
      */
-    protected routes: Route[];
+    protected routes: Route[]
     /**
      * Debug Mode
      * 
      * @protected
      * @type {boolean}
      */
-    protected debugMode: boolean = false;
+    protected debugMode: boolean = false
     /**
      * CORS Config
      *
      * @protected
      * @type {RouterCorsConfig}
      */
-    protected corsConfig: RouterCorsConfig;
+    protected corsConfig: RouterCorsConfig
     /**
      * Route Object
      *
@@ -75,7 +75,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    connect(url: string, ...handlers: RouterHandler[]): Router;
+    connect(url: string, ...handlers: RouterHandler[]): Router
     /**
      * Register DELETE route
      *
@@ -83,7 +83,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    delete(url: string, ...handlers: RouterHandler[]): Router;
+    delete(url: string, ...handlers: RouterHandler[]): Router
     /**
      * Register GET route
      *
@@ -91,7 +91,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    get(url: string, ...handlers: RouterHandler[]): Router;
+    get(url: string, ...handlers: RouterHandler[]): Router
     /**
      * Register HEAD route
      *
@@ -99,7 +99,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    head(url: string, ...handlers: RouterHandler[]): Router;
+    head(url: string, ...handlers: RouterHandler[]): Router
     /**
      * Register OPTIONS route
      *
@@ -107,7 +107,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    options(url: string, ...handlers: RouterHandler[]): Router;
+    options(url: string, ...handlers: RouterHandler[]): Router
     /**
      * Register PATCH route
      *
@@ -115,7 +115,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    patch(url: string, ...handlers: RouterHandler[]): Router;
+    patch(url: string, ...handlers: RouterHandler[]): Router
     /**
      * Register POST route
      *
@@ -123,7 +123,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    post(url: string, ...handlers: RouterHandler[]): Router;
+    post(url: string, ...handlers: RouterHandler[]): Router
     /**
      * Register PUT route
      *
@@ -131,7 +131,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    put(url: string, ...handlers: RouterHandler[]): Router;
+    put(url: string, ...handlers: RouterHandler[]): Router
     /**
      * Register TRACE route
      *
@@ -139,7 +139,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    trace(url: string, ...handlers: RouterHandler[]): Router;
+    trace(url: string, ...handlers: RouterHandler[]): Router
     /**
      * Register route, ignoring method
      *
@@ -147,7 +147,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    any(url: string, ...handlers: RouterHandler[]): Router;
+    any(url: string, ...handlers: RouterHandler[]): Router
     /**
      * Register route, ignoring method
      *
@@ -156,7 +156,7 @@ declare class Router {
      * @param  {...RouterHandler} handlers
      * @returns {Router}
      */
-    all(url: string, ...handlers: RouterHandler[]): Router;
+    all(url: string, ...handlers: RouterHandler[]): Router
     /**
      * CORS Config
      *
@@ -179,7 +179,7 @@ declare class Router {
      * @param {RouterCorsConfig} config
      * @returns {Router}
      */
-    cors(config: RouterCorsConfig): Router;
+    cors(config?: RouterCorsConfig): Router
     /**
      * Register route
      *
@@ -189,7 +189,7 @@ declare class Router {
      * @param {RouterHandler[]} handlers Arrar of handler functions
      * @returns {Router}
      */
-    private register(method: string, url: string, handlers: RouteHandler[]): Router
+    private register(method: string, url: string, handlers: RouterHandler[]): Router
     /**
      * Get Route by request
      *
@@ -204,10 +204,10 @@ declare class Router {
      * @param {Event} event
      * @returns {Response}
      */
-    handle(event: Event): Response;
+    handle(event: Event): Response
 }
 declare namespace Router {
-    export { Route, RouterRequest, RouterResponse, RouterNext, RouterHandler, RouterCorsConfig };
+    export { Route, RouterRequest, RouterResponse, RouterNext, RouterHandler, RouterCorsConfig }
 }
 /**
  * Route Object
@@ -216,16 +216,16 @@ type Route = {
     /**
      * HTTP request method
      */
-    method: string;
+    method: string
     /**
      * URL String
      */
-    url: string;
+    url: string
     /**
      * Array of handler functions
      */
-    handlers: RouterHandler[];
-};
+    handlers: RouterHandler[]
+}
 /**
  * CORS Config
  */
@@ -233,28 +233,28 @@ type RouterCorsConfig = {
     /**
      * Access-Control-Allow-Origin (default: `*`)
      */
-    allowOrigin: string;
+    allowOrigin: string
     /**
      * Access-Control-Allow-Methods (default: `*`)
      */
-    allowMethods: string;
+    allowMethods: string
     /**
      * Access-Control-Allow-Headers (default: `*`)
      */
-    allowHeaders: string;
+    allowHeaders: string
     /**
      * Access-Control-Max-Age (default: `86400`)
      */
-    maxAge: number;
+    maxAge: number
     /**
      * Return status code for OPTIONS request (default: `204`)
      */
-    optionsSuccessStatus: number;
-};
+    optionsSuccessStatus: number
+}
 /**
  * Handler Function
  */
-type RouterHandler = (request: Request, response: Response, next: any) => any;
+type RouterHandler = (request: Request, response: Response, next: any) => any
 /**
  * Request Object
  */
@@ -262,26 +262,24 @@ type RouterRequest = {
     /**
      * HTTP request method
      */
-    method: string;
+    method: string
     /**
      * Object containing all parameters defined in the url string
      */
     params: {
-        [x: string]: string;
-    };
+        [x: string]: string
+    }
     /**
      * Object containing request headers
      */
-    headers: {
-        [x: string]: string;
-    };
+    headers: Headers
     /**
      * Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
      */
     body: {
-        [x: string]: string;
-    } | string;
-};
+        [x: string]: string
+    } | string
+}
 /**
  * Response Object
  */
@@ -289,21 +287,19 @@ type RouterResponse = {
     /**
      * Object you can set response headers in
      */
-    headers: {
-        [x: string]: string;
-    };
+    headers: Headers
     /**
      * Return status code (default: `204`)
      */
-    status: number;
+    status: number
     /**
      * Either an `object` (will be converted to JSON) or a string
      */
     body: {
-        [x: string]: string;
-    } | string;
-};
+        [x: string]: string
+    } | string
+}
 /**
  * Next Function
  */
-type RouterNext = () => Promise<any>;
+type RouterNext = () => Promise<any>
