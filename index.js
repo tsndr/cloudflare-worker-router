@@ -261,7 +261,7 @@ class Router {
      * Get Route by request
      * 
      * @private
-     * @param {Request} request 
+     * @param {Request} request
      * @returns {Route|undefined}
      */
     getRoute(request) {
@@ -291,70 +291,81 @@ class Router {
     /**
      * Handle requests
      * 
-     * @param {Event} event 
+     * @param {Request} request
      * @returns {Response}
      */
-    async handle(event) {
-        const request = { headers: event.request.headers, method: event.request.method, url: event.request.url, event: event }
-        request.params = []
-        if (request.method === 'OPTIONS' && Object.keys(this.corsConfig).length) {
-            return new Response(null, {
-                headers: {
+    async handle(request) {
+        try {
+            if (request instanceof Event) {
+                request = request.request
+                console.warn("Warning: Using `event` on `router.handle()` is deprecated and might go away in future versions, please use `event.request` instead.")
+            }
+            const req = { headers: request.headers, method: request.method, url: request.url }
+            req.params = []
+            if (req.method === 'OPTIONS' && Object.keys(this.corsConfig).length) {
+                return new Response(null, {
+                    headers: {
+                        'Access-Control-Allow-Origin': this.corsConfig.allowOrigin,
+                        'Access-Control-Allow-Methods': this.corsConfig.allowMethods,
+                        'Access-Control-Allow-Headers': this.corsConfig.allowHeaders,
+                        'Access-Control-Max-Age': this.corsConfig.maxAge
+                    },
+                    status: this.corsConfig.optionsSuccessStatus
+                })
+            }
+            if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
+                if (req.headers.has('Content-Type') && req.headers.get('Content-Type').includes('json')) {
+                    try {
+                        req.body = await request.json()
+                    } catch {
+                        req.body = {}
+                    }
+                } else {
+                    try {
+                        req.body = await request.text()
+                    } catch {
+                        req.body = ''
+                    }
+                }
+            }
+            const route = this.getRoute(req)
+            if (!route) {
+                return new Response(this.debugMode ? 'Route not found!' : null, {
+                    status: 404
+                })
+            }
+            const res = { headers: {} }
+            if (Object.keys(this.corsConfig).length) {
+                res.headers = {
+                    ...res.headers,
                     'Access-Control-Allow-Origin': this.corsConfig.allowOrigin,
                     'Access-Control-Allow-Methods': this.corsConfig.allowMethods,
                     'Access-Control-Allow-Headers': this.corsConfig.allowHeaders,
-                    'Access-Control-Max-Age': this.corsConfig.maxAge
-                },
-                status: this.corsConfig.optionsSuccessStatus
-            })
-        }
-        if (['POST', 'PUT', 'PATCH'].includes(request.method)) {
-            try {
-                request.body = await event.request.json()
-            } catch {
-                try {
-                    request.body = await event.request.text()
-                } catch {}
+                    'Access-Control-Max-Age': this.corsConfig.maxAge,
+                }
             }
-        }
-        const route = this.getRoute(request)
-        if (!route) {
-            return new Response(this.debugMode ? 'Route not found!' : '', {
-                status: 404
-            })
-        }
-        const response = { headers: {} }
-        if (Object.keys(this.corsConfig).length) {
-            response.headers = {
-                ...response.headers,
-                'Access-Control-Allow-Origin': this.corsConfig.allowOrigin,
-                'Access-Control-Allow-Methods': this.corsConfig.allowMethods,
-                'Access-Control-Allow-Headers': this.corsConfig.allowHeaders,
-                'Access-Control-Max-Age': this.corsConfig.maxAge,
-            }
-        }
-        let prevIndex = -1
-        try {
+            let prevIndex = -1
             const runner = async index => {
                 if (index === prevIndex)
                     throw new Error('next() called multiple times')
                 prevIndex = index
                 if (typeof route.handlers[index] === 'function')
-                    await route.handlers[index](request, response, async () => await runner(index + 1))
+                    await route.handlers[index](req, res, async () => await runner(index + 1))
             }
             await runner(0)
-        } catch(err) {
-            return new Response(this.debugMode ? err.stack : '', {
-                status: 500
+            if (typeof res.body === 'object') {
+                if (!res.headers['Content-Type'])
+                    res.headers['Content-Type'] = 'application/json'
+                res.body = JSON.stringify(res.body)
+            }
+            return new Response(res.body, {
+                status: res.status || (res.body ? 200 : 204),
+                headers: res.headers
             })
+        } catch(err) {
+            console.error(err)
+            return new Response(this.debugMode ? err.stack : '', { status: 500 })
         }
-        const headers = Object.assign({ 'Content-Type': 'application/json' }, response.headers)
-        if (headers['Content-Type'].includes('json') && typeof response.body === 'object')
-            response.body = JSON.stringify(response.body)
-        return new Response(response.body, {
-            status: response.status || (response.body ? 200 : 500),
-            headers
-        })
     }
 }
 

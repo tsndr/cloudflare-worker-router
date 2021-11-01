@@ -201,10 +201,10 @@ declare class Router {
     /**
      * Handle requests
      *
-     * @param {Event} event
+     * @param {Request} request
      * @returns {Response}
      */
-    handle(event: Event): Response
+    handle(request: Request): Response
 }
 declare namespace Router {
     export { Route, RouterRequest, RouterResponse, RouterNext, RouterHandler, RouterCorsConfig }
