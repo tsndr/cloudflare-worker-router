@@ -74,7 +74,7 @@ router.delete('/user/:id', (req, res, next) => {
 
 // Listen Cloudflare Workers Fetch Event
 addEventListener('fetch', event => {
-  event.respondWith(router.handle(event))
+  event.respondWith(router.handle(event.request))
 })
 ```
 
