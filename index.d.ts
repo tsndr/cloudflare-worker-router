@@ -20,7 +20,7 @@ declare class Router {
      * @protected
      * @type {boolean}
      */
-    protected debugMode: boolean = false
+    protected debugMode: boolean
     /**
      * CORS Config
      *
@@ -172,7 +172,7 @@ declare class Router {
      * 
      * @param {boolean} state Whether to turn on or off debug mode (default: true)
      */
-    debug(state: boolean = true): void
+    debug(state: boolean): void
     /**
      * Enable CORS support
      *
@@ -254,7 +254,7 @@ type RouterCorsConfig = {
 /**
  * Handler Function
  */
-type RouterHandler = (request: Request, response: Response, next: any) => any
+type RouterHandler = (req: RouterRequest, res: RouterResponse, next: RouterNext) => any
 /**
  * Request Object
  */
@@ -267,7 +267,7 @@ type RouterRequest = {
      * Object containing all parameters defined in the url string
      */
     params: {
-        [x: string]: string
+        [key: string]: string
     }
     /**
      * Object containing request headers
@@ -276,9 +276,7 @@ type RouterRequest = {
     /**
      * Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
      */
-    body: {
-        [x: string]: string
-    } | string
+    body: any
 }
 /**
  * Response Object
@@ -296,10 +294,10 @@ type RouterResponse = {
      * Either an `object` (will be converted to JSON) or a string
      */
     body: {
-        [x: string]: string
+        [key: string]: string
     } | string
 }
 /**
  * Next Function
  */
-type RouterNext = () => Promise<any>
+type RouterNext = () => Promise<void>
