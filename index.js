@@ -358,6 +358,9 @@ class Router {
                     res.headers['Content-Type'] = 'application/json'
                 res.body = JSON.stringify(res.body)
             }
+            if(res.response){
+                return res.response
+            }
             return new Response(res.body, {
                 status: res.status || (res.body ? 200 : 204),
                 headers: res.headers
