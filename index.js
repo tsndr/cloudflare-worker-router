@@ -50,7 +50,7 @@ class Router {
      * @property {Object<string, string>} params Object containing all parameters defined in the url string
      * @property {Object<string, string>} query Object containing all query parameters
      * @property {Object<string, string>} headers Object containing request headers
-     * @property {Object<string, string>|string} body Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
+     * @property {Object<string, string>|string} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
      */
 
     /**
@@ -313,7 +313,7 @@ class Router {
                     status: this.corsConfig.optionsSuccessStatus
                 })
             }
-            if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
+            if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
                 if (req.headers.has('Content-Type') && req.headers.get('Content-Type').includes('json')) {
                     try {
                         req.body = await request.json()
