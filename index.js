@@ -51,6 +51,7 @@ class Router {
      * @property {Object<string, string>} query Object containing all query parameters
      * @property {Object<string, string>} headers Object containing request headers
      * @property {Object<string, string>|string} body Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
+     * @property {Object<string, string | number>} cf object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
      */
 
     /**
@@ -300,7 +301,7 @@ class Router {
                 request = request.request
                 console.warn("Warning: Using `event` on `router.handle()` is deprecated and might go away in future versions, please use `event.request` instead.")
             }
-            const req = { headers: request.headers, method: request.method, url: request.url }
+            const req = { headers: request.headers, method: request.method, url: request.url, cf: request.cf || {} }
             req.params = []
             if (req.method === 'OPTIONS' && Object.keys(this.corsConfig).length) {
                 return new Response(null, {
