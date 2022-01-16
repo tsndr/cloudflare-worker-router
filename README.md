@@ -129,7 +129,7 @@ An unlimited number of functions getting [`req`](#req-object) and [`res`](#res-o
 
 Key       | Type                | Description
 --------- | ------------------- | -----------
-`body`    | `object` / `string` | Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
+`body`    | `object` / `string` | Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
 `headers` | `object`            | Object containing request headers
 `method`  | `string`            | HTTP request method
 `params`  | `object`            | Object containing all parameters defined in the url string
