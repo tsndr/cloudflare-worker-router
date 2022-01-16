@@ -50,7 +50,7 @@ class Router {
      * @property {Object<string, string>} params Object containing all parameters defined in the url string
      * @property {Object<string, string>} query Object containing all query parameters
      * @property {Object<string, string>} headers Object containing request headers
-     * @property {Object<string, string>|string} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
+     * @property {Object<string, string> | string} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
      * @property {Object<string, string | number>} cf object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
      */
 
@@ -60,7 +60,7 @@ class Router {
      * @typedef RouterResponse
      * @property {Object<string, string>} headers Object you can set response headers in
      * @property {number} status Return status code (default: `204`)
-     * @property {Object<string, string>|string} body Either an `object` (will be converted to JSON) or a string
+     * @property {Object<string, string> | string} body Either an `object` (will be converted to JSON) or a string
      */
 
     /**
@@ -263,7 +263,7 @@ class Router {
      * 
      * @private
      * @param {Request} request
-     * @returns {Route|undefined}
+     * @returns {Route | undefined}
      */
     getRoute(request) {
         const url = new URL(request.url)
