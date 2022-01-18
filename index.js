@@ -61,6 +61,7 @@ class Router {
      * @property {Object<string, string>} headers Object you can set response headers in
      * @property {number} status Return status code (default: `204`)
      * @property {Object<string, string> | string} body Either an `object` (will be converted to JSON) or a string
+     * @property {Response} raw A response object that is to be returned, this will void all other res properties and return this as is.
      */
 
     /**
@@ -359,8 +360,8 @@ class Router {
                     res.headers['Content-Type'] = 'application/json'
                 res.body = JSON.stringify(res.body)
             }
-            if(res.response){
-                return res.response
+            if (res.raw) {
+                return res.raw
             }
             return new Response(res.body, {
                 status: res.status || (res.body ? 200 : 204),
