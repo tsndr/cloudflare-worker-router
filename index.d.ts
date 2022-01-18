@@ -54,6 +54,7 @@ declare class Router {
      * @property {Object<string, string>} headers Object you can set response headers in
      * @property {number} status Return status code (default: `204`)
      * @property {Object<string, string> | string} body Either an `object` (will be converted to JSON) or a string
+     * @property {Response} response A response object that is to be returned, this will void all other res properties and return this as is.
      */
     /**
      * Next Function
@@ -291,6 +292,10 @@ type RouterResponse = {
      * Return status code (default: `204`)
      */
     status: number
+    /**
+     * A response object to be directly returned to the client
+     */
+    response: Response
     /**
      * Either an `object` (will be converted to JSON) or a string
      */
