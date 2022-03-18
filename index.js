@@ -313,19 +313,17 @@ class Router {
      * @param {any} ctx
      * @returns {Response}
      */
-    async handle(request, env, ctx) {
+    async handle(request, extend) {
         try {
             if (request instanceof Event) {
                 request = request.request
                 console.warn("Warning: Using `event` on `router.handle()` is deprecated and might go away in future versions, please use `event.request` instead.")
             }
             const req = {
+                ...extend,
                 method: request.method,
                 headers: request.headers,
                 url: request.url,
-                env: env || {},
-                ctx: ctx || {},
-                cf: request.cf || {},
                 params: []
             }
             if (req.method === 'OPTIONS' && Object.keys(this.corsConfig).length) {

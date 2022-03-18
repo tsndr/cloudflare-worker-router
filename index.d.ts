@@ -288,17 +288,9 @@ type RouterRequest = {
      */
     url: string
     /**
-     * Environment object
+     * Extend request object with custom properties
      */
-    env: any
-    /**
-     * Context object
-     */
-    ctx: any
-    /**
-     * Cloudflare object
-     */
-    cf: any
+    extend: any
     /**
      * Object containing all parameters defined in the url string
      */
