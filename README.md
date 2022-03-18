@@ -27,9 +27,17 @@ const router = new Router()
 // Enabling buildin CORS support
 router.cors()
 
+// Register global middleware
+router.use((req, res, next) => {
+  res.headers = {
+    ...res.headers,
+      'X-Global-Middlewares': 'true'
+  }
+  next()
+})
+
 // Simple get
 router.get('/user', (req, res) => {
-
   res.body = {
     data: {
       id: 1,
@@ -87,6 +95,15 @@ Enable or disable debug mode. Which will return the `error.stack` in case of an 
 
 #### `state`
 State is a `boolean` which determines if debug mode should be enabled or not (default: `true`)
+
+
+### `router.use(handler)
+
+Register a global middleware handler.
+
+#### `handler` (function)
+
+Handler is a `function` which will be called for every request.
 
 
 ### `router.cors([config])`
