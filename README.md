@@ -97,7 +97,7 @@ Enable or disable debug mode. Which will return the `error.stack` in case of an 
 State is a `boolean` which determines if debug mode should be enabled or not (default: `true`)
 
 
-### `router.use(handler)
+### `router.use(handler)`
 
 Register a global middleware handler.
 
