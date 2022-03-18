@@ -218,9 +218,10 @@ declare class Router {
      * Handle requests
      *
      * @param {Request} request
+     * @param {any} extend
      * @returns {Response}
      */
-    handle(request: Request): Response
+    handle(request: Request, extend: any): Response
 }
 declare namespace Router {
     export { Route, RouterRequest, RouterResponse, RouterNext, RouterHandler, RouterCorsConfig }
@@ -287,10 +288,6 @@ type RouterRequest = {
      * URL String
      */
     url: string
-    /**
-     * Extend request object with custom properties
-     */
-    extend: any
     /**
      * Object containing all parameters defined in the url string
      */
