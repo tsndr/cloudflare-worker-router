@@ -309,11 +309,10 @@ class Router {
      * Handle requests
      * 
      * @param {Request} request
-     * @param {any} env
-     * @param {any} ctx
+     * @param {any} extend
      * @returns {Response}
      */
-    async handle(request, extend) {
+    async handle(request, extend = {}) {
         try {
             if (request instanceof Event) {
                 request = request.request
