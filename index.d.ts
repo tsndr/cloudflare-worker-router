@@ -266,15 +266,31 @@ type RouterRequest = {
      */
     method: string
     /**
+     * Object containing request headers
+     */
+    headers: Headers
+    /**
+     * URL String
+     */
+    url: string
+    /**
+     * Environment object
+     */
+    env: any
+    /**
+     * Context object
+     */
+    ctx: any
+    /**
+     * Cloudflare object
+     */
+    cf: any
+    /**
      * Object containing all parameters defined in the url string
      */
     params: {
         [key: string]: string
     }
-    /**
-     * Object containing request headers
-     */
-    headers: Headers
     /**
      * Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
      */
