@@ -294,16 +294,25 @@ class Router {
      * Handle requests
      * 
      * @param {Request} request
+     * @param {any} env
+     * @param {any} ctx
      * @returns {Response}
      */
-    async handle(request) {
+    async handle(request, env, ctx) {
         try {
             if (request instanceof Event) {
                 request = request.request
                 console.warn("Warning: Using `event` on `router.handle()` is deprecated and might go away in future versions, please use `event.request` instead.")
             }
-            const req = { headers: request.headers, method: request.method, url: request.url, cf: request.cf || {} }
-            req.params = []
+            const req = {
+                method: request.method,
+                headers: request.headers,
+                url: request.url,
+                env: env || {},
+                ctx: ctx || {},
+                cf: request.cf || {},
+                params: []
+            }
             if (req.method === 'OPTIONS' && Object.keys(this.corsConfig).length) {
                 return new Response(null, {
                     headers: {
