@@ -17,6 +17,11 @@ class Router {
         this.routes = []
 
         /**
+         * Global Handlers
+         */
+        this.globalHandlers = []
+
+        /**
          * Debug Mode
          * 
          * @protected
@@ -79,6 +84,16 @@ class Router {
      * @param {Response} response
      * @param {RouterNext} next
      */
+
+    /**
+     * Register global handler
+     * 
+     * @param {RouterHandler} handler
+     */
+    use(handlers) {
+        this.globalHandlers.push(handlers)
+        return this
+    }
 
     /**
      * Register CONNECT route
@@ -355,13 +370,14 @@ class Router {
                     'Access-Control-Max-Age': this.corsConfig.maxAge,
                 }
             }
+            const handlers = [...this.globalHandlers, ...route.handlers]
             let prevIndex = -1
             const runner = async index => {
                 if (index === prevIndex)
                     throw new Error('next() called multiple times')
                 prevIndex = index
-                if (typeof route.handlers[index] === 'function')
-                    await route.handlers[index](req, res, async () => await runner(index + 1))
+                if (typeof handlers[index] === 'function')
+                    await handlers[index](req, res, async () => await runner(index + 1))
             }
             await runner(0)
             if (typeof res.body === 'object') {

@@ -15,6 +15,13 @@ declare class Router {
      */
     protected routes: Route[]
     /**
+     * Global Handlers
+     * 
+     * @protected
+     * @type {Handler[]}
+     */
+    protected globalHandlers: Handler[]
+    /**
      * Debug Mode
      * 
      * @protected
@@ -70,6 +77,13 @@ declare class Router {
      * @param {Response} response
      * @param {next} next
      */
+    /**
+     * Register global handler
+     * 
+     * @param {RouterHandler} handler
+     * @param handlers 
+     */
+    use(handler: RouterHandler): Router
     /**
      * Register CONNECT route
      *
@@ -303,7 +317,7 @@ type RouterResponse = {
     /**
      * Object you can set response headers in
      */
-    headers: Headers
+    headers: Object<string, string>
     /**
      * Return status code (default: `204`)
      */
