@@ -323,7 +323,9 @@ class Router {
                 method: request.method,
                 headers: request.headers,
                 url: request.url,
-                params: []
+                params: [],
+                query: {},
+                body: ''
             }
             if (req.method === 'OPTIONS' && Object.keys(this.corsConfig).length) {
                 return new Response(null, {
@@ -336,7 +338,7 @@ class Router {
                     status: this.corsConfig.optionsSuccessStatus
                 })
             }
-            if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+            if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
                 if (req.headers.has('Content-Type') && req.headers.get('Content-Type').includes('json')) {
                     try {
                         req.body = await request.json()
