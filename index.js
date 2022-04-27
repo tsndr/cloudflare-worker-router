@@ -309,7 +309,7 @@ class Router {
      * Handle requests
      * 
      * @param {Request} request
-     * @param {any} extend
+     * @param {any=} extend
      * @returns {Response}
      */
     async handle(request, extend = {}) {
