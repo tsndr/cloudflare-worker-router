@@ -29,10 +29,7 @@ router.cors()
 
 // Register global middleware
 router.use((req, res, next) => {
-  res.headers = {
-    ...res.headers,
-      'X-Global-Middlewares': 'true'
-  }
+  res.headers.set('X-Global-Middlewares', 'true')
   next()
 })
 
@@ -147,7 +144,7 @@ An unlimited number of functions getting [`req`](#req-object) and [`res`](#res-o
 Key       | Type                | Description
 --------- | ------------------- | -----------
 `body`    | `object` / `string` | Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
-`headers` | `object`            | Object containing request headers
+`headers` | `Headers`           | Request [Headers Object](https://developer.mozilla.org/en-US/docs/Web/API/Headers)
 `method`  | `string`            | HTTP request method
 `params`  | `object`            | Object containing all parameters defined in the url string
 `query`   | `object`            | Object containing all query parameters
@@ -157,7 +154,7 @@ Key       | Type                | Description
 Key       | Type                | Description
 --------- | ------------------- | -----------
 `body`    | `object` / `string` | Either set an `object` (will be converted to JSON) or a string
-`headers` | `object`            | Object you can set response headers in
+`headers` | `Headers`           | Response [Headers Object](https://developer.mozilla.org/en-US/docs/Web/API/Headers)
 `status`  | `integer`           | Return status code (default: `204`)
 
 

@@ -54,7 +54,7 @@ class Router {
      * @property {string} method HTTP request method
      * @property {Object<string, string>} params Object containing all parameters defined in the url string
      * @property {Object<string, string>} query Object containing all query parameters
-     * @property {Object<string, string>} headers Object containing request headers
+     * @property {Headers} headers Request headers object
      * @property {Object<string, string> | string} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
      * @property {Object<string, string | number>} cf object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
      */
@@ -63,7 +63,7 @@ class Router {
      * Response Object
      * 
      * @typedef RouterResponse
-     * @property {Object<string, string>} headers Object you can set response headers in
+     * @property {Headers} headers Response headers object
      * @property {number} status Return status code (default: `204`)
      * @property {Object<string, string> | string} body Either an `object` (will be converted to JSON) or a string
      * @property {Response} raw A response object that is to be returned, this will void all other res properties and return this as is.
@@ -80,8 +80,8 @@ class Router {
      * Handler Function
      * 
      * @callback RouterHandler
-     * @param {Request} request
-     * @param {Response} response
+     * @param {RouterRequest} request
+     * @param {RouterResponse} response
      * @param {RouterNext} next
      */
 
@@ -359,15 +359,12 @@ class Router {
                     status: 404
                 })
             }
-            const res = { headers: {} }
+            const res = { headers: new Headers() }
             if (Object.keys(this.corsConfig).length) {
-                res.headers = {
-                    ...res.headers,
-                    'Access-Control-Allow-Origin': this.corsConfig.allowOrigin,
-                    'Access-Control-Allow-Methods': this.corsConfig.allowMethods,
-                    'Access-Control-Allow-Headers': this.corsConfig.allowHeaders,
-                    'Access-Control-Max-Age': this.corsConfig.maxAge,
-                }
+                res.headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
+                res.headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
+                res.headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
+                res.headers.set('Access-Control-Max-Age', this.corsConfig.maxAge)
             }
             const handlers = [...this.globalHandlers, ...route.handlers]
             let prevIndex = -1
@@ -380,8 +377,8 @@ class Router {
             }
             await runner(0)
             if (typeof res.body === 'object') {
-                if (!res.headers['Content-Type'])
-                    res.headers['Content-Type'] = 'application/json'
+                if (!res.headers.has('Content-Type'))
+                    res.headers.set('Content-Type', 'application/json')
                 res.body = JSON.stringify(res.body)
             }
             if (res.raw) {
