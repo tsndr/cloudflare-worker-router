@@ -218,10 +218,10 @@ declare class Router {
      * Handle requests
      *
      * @param {Request} request
-     * @param {any} extend
+     * @param {any=} extend
      * @returns {Response}
      */
-    handle(request: Request, extend: any): Response
+    handle(request: Request, extend?: any): Response
 }
 declare namespace Router {
     export { Route, RouterRequest, RouterResponse, RouterNext, RouterHandler, RouterCorsConfig }
