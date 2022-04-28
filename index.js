@@ -221,7 +221,7 @@ class Router {
     /**
      * Debug Mode
      * 
-     * @param {boolean} state Whether to turn on or off debug mode (default: true)
+     * @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
      */
     debug(state = true) {
         this.debugMode = state
