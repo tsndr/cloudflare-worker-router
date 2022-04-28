@@ -27,7 +27,7 @@ declare class Router {
      * @protected
      * @type {boolean}
      */
-    protected debugMode: boolean
+    protected debugMode: boolean = false
     /**
      * CORS Config
      *
@@ -186,9 +186,9 @@ declare class Router {
     /**
      * Debug Mode
      * 
-     * @param {boolean} state Whether to turn on or off debug mode (default: true)
+     * @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
      */
-    debug(state: boolean): void
+    debug(state?: boolean): void
     /**
      * Enable CORS support
      *
