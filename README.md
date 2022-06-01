@@ -151,11 +151,12 @@ Key       | Type                | Description
 
 ### `res`-Object
 
-Key       | Type                | Description
---------- | ------------------- | -----------
-`body`    | `object` / `string` | Either set an `object` (will be converted to JSON) or a string
-`headers` | `Headers`           | Response [Headers Object](https://developer.mozilla.org/en-US/docs/Web/API/Headers)
-`status`  | `integer`           | Return status code (default: `204`)
+Key         | Type                | Description
+----------- | ------------------- | -----------
+`body`      | `object` / `string` | Either set an `object` (will be converted to JSON) or a string
+`headers`   | `Headers`           | Response [Headers Object](https://developer.mozilla.org/en-US/docs/Web/API/Headers)
+`status`    | `integer`           | Return status code (default: `204`)
+`webSocket` | `WebSocket`         | Upgraded websocket connection
 
 
 ## Setup

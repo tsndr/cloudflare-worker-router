@@ -321,6 +321,10 @@ type RouterResponse = {
     body: {
         [key: string]: string
     } | string
+    /**
+     * Upgraded websocket connection
+     */
+    webSocket?: WebSocket
 }
 /**
  * Next Function
