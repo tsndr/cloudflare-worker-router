@@ -17,6 +17,11 @@ class Router {
         this.routes = []
 
         /**
+         * Global Handlers
+         */
+        this.globalHandlers = []
+
+        /**
          * Debug Mode
          * 
          * @protected
@@ -49,7 +54,7 @@ class Router {
      * @property {string} method HTTP request method
      * @property {Object<string, string>} params Object containing all parameters defined in the url string
      * @property {Object<string, string>} query Object containing all query parameters
-     * @property {Object<string, string>} headers Object containing request headers
+     * @property {Headers} headers Request headers object
      * @property {Object<string, string> | string} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
      * @property {Object<string, string | number>} cf object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
      */
@@ -58,7 +63,7 @@ class Router {
      * Response Object
      * 
      * @typedef RouterResponse
-     * @property {Object<string, string>} headers Object you can set response headers in
+     * @property {Headers} headers Response headers object
      * @property {number} status Return status code (default: `204`)
      * @property {Object<string, string> | string} body Either an `object` (will be converted to JSON) or a string
      * @property {Response} raw A response object that is to be returned, this will void all other res properties and return this as is.
@@ -75,10 +80,20 @@ class Router {
      * Handler Function
      * 
      * @callback RouterHandler
-     * @param {Request} request
-     * @param {Response} response
+     * @param {RouterRequest} request
+     * @param {RouterResponse} response
      * @param {RouterNext} next
      */
+
+    /**
+     * Register global handler
+     * 
+     * @param {RouterHandler} handler
+     */
+    use(handlers) {
+        this.globalHandlers.push(handlers)
+        return this
+    }
 
     /**
      * Register CONNECT route
@@ -206,7 +221,7 @@ class Router {
     /**
      * Debug Mode
      * 
-     * @param {boolean} state Whether to turn on or off debug mode (default: true)
+     * @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
      */
     debug(state = true) {
         this.debugMode = state
@@ -294,16 +309,24 @@ class Router {
      * Handle requests
      * 
      * @param {Request} request
+     * @param {any=} extend
      * @returns {Response}
      */
-    async handle(request) {
+    async handle(request, extend = {}) {
         try {
             if (request instanceof Event) {
                 request = request.request
                 console.warn("Warning: Using `event` on `router.handle()` is deprecated and might go away in future versions, please use `event.request` instead.")
             }
-            const req = { headers: request.headers, method: request.method, url: request.url, cf: request.cf || {} }
-            req.params = []
+            const req = {
+                ...extend,
+                method: request.method,
+                headers: request.headers,
+                url: request.url,
+                params: [],
+                query: {},
+                body: ''
+            }
             if (req.method === 'OPTIONS' && Object.keys(this.corsConfig).length) {
                 return new Response(null, {
                     headers: {
@@ -315,7 +338,7 @@ class Router {
                     status: this.corsConfig.optionsSuccessStatus
                 })
             }
-            if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+            if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
                 if (req.headers.has('Content-Type') && req.headers.get('Content-Type').includes('json')) {
                     try {
                         req.body = await request.json()
@@ -336,28 +359,26 @@ class Router {
                     status: 404
                 })
             }
-            const res = { headers: {} }
+            const res = { headers: new Headers() }
             if (Object.keys(this.corsConfig).length) {
-                res.headers = {
-                    ...res.headers,
-                    'Access-Control-Allow-Origin': this.corsConfig.allowOrigin,
-                    'Access-Control-Allow-Methods': this.corsConfig.allowMethods,
-                    'Access-Control-Allow-Headers': this.corsConfig.allowHeaders,
-                    'Access-Control-Max-Age': this.corsConfig.maxAge,
-                }
+                res.headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
+                res.headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
+                res.headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
+                res.headers.set('Access-Control-Max-Age', this.corsConfig.maxAge)
             }
+            const handlers = [...this.globalHandlers, ...route.handlers]
             let prevIndex = -1
             const runner = async index => {
                 if (index === prevIndex)
                     throw new Error('next() called multiple times')
                 prevIndex = index
-                if (typeof route.handlers[index] === 'function')
-                    await route.handlers[index](req, res, async () => await runner(index + 1))
+                if (typeof handlers[index] === 'function')
+                    await handlers[index](req, res, async () => await runner(index + 1))
             }
             await runner(0)
             if (typeof res.body === 'object') {
-                if (!res.headers['Content-Type'])
-                    res.headers['Content-Type'] = 'application/json'
+                if (!res.headers.has('Content-Type'))
+                    res.headers.set('Content-Type', 'application/json')
                 res.body = JSON.stringify(res.body)
             }
             if (res.raw) {
