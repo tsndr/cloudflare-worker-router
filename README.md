@@ -27,9 +27,14 @@ const router = new Router()
 // Enabling buildin CORS support
 router.cors()
 
+// Register global middleware
+router.use((req, res, next) => {
+  res.headers.set('X-Global-Middlewares', 'true')
+  next()
+})
+
 // Simple get
 router.get('/user', (req, res) => {
-
   res.body = {
     data: {
       id: 1,
@@ -89,6 +94,15 @@ Enable or disable debug mode. Which will return the `error.stack` in case of an 
 State is a `boolean` which determines if debug mode should be enabled or not (default: `true`)
 
 
+### `router.use(handler)`
+
+Register a global middleware handler.
+
+#### `handler` (function)
+
+Handler is a `function` which will be called for every request.
+
+
 ### `router.cors([config])`
 
 If enabled will overwrite other `OPTIONS` requests.
@@ -130,18 +144,17 @@ An unlimited number of functions getting [`req`](#req-object) and [`res`](#res-o
 Key       | Type                | Description
 --------- | ------------------- | -----------
 `body`    | `object` / `string` | Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
-`headers` | `object`            | Object containing request headers
+`headers` | `Headers`           | Request [Headers Object](https://developer.mozilla.org/en-US/docs/Web/API/Headers)
 `method`  | `string`            | HTTP request method
 `params`  | `object`            | Object containing all parameters defined in the url string
 `query`   | `object`            | Object containing all query parameters
-
 
 ### `res`-Object
 
 Key         | Type                | Description
 ----------- | ------------------- | -----------
 `body`      | `object` / `string` | Either set an `object` (will be converted to JSON) or a string
-`headers`   | `object`            | Object you can set response headers in
+`headers`   | `Headers`           | Response [Headers Object](https://developer.mozilla.org/en-US/docs/Web/API/Headers)
 `status`    | `integer`           | Return status code (default: `204`)
 `webSocket` | `WebSocket`         | Upgraded websocket connection
 

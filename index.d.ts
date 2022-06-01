@@ -15,12 +15,19 @@ declare class Router {
      */
     protected routes: Route[]
     /**
+     * Global Handlers
+     * 
+     * @protected
+     * @type {Handler[]}
+     */
+    protected globalHandlers: Handler[]
+    /**
      * Debug Mode
      * 
      * @protected
      * @type {boolean}
      */
-    protected debugMode: boolean
+    protected debugMode: boolean = false
     /**
      * CORS Config
      *
@@ -43,7 +50,7 @@ declare class Router {
      * @property {string} method HTTP request method
      * @property {Object<string, string>} params Object containing all parameters defined in the url string
      * @property {Object<string, string>} query Object containing all query parameters
-     * @property {Object<string, string>} headers Object containing request headers
+     * @property {Headers} headers Request headers object
      * @property {Object<string, string> | string} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
      * @property {Object<string, string | number>} cf object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
      */
@@ -51,7 +58,7 @@ declare class Router {
      * Response Object
      *
      * @typedef RouterResponse
-     * @property {Object<string, string>} headers Object you can set response headers in
+     * @property {Headers} headers Response headers object
      * @property {number} status Return status code (default: `204`)
      * @property {Object<string, string> | string} body Either an `object` (will be converted to JSON) or a string
      * @property {Response} raw A response object that is to be returned, this will void all other res properties and return this as is.
@@ -70,6 +77,13 @@ declare class Router {
      * @param {Response} response
      * @param {next} next
      */
+    /**
+     * Register global handler
+     * 
+     * @param {RouterHandler} handler
+     * @param handlers 
+     */
+    use(handler: RouterHandler): Router
     /**
      * Register CONNECT route
      *
@@ -172,9 +186,9 @@ declare class Router {
     /**
      * Debug Mode
      * 
-     * @param {boolean} state Whether to turn on or off debug mode (default: true)
+     * @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
      */
-    debug(state: boolean): void
+    debug(state?: boolean): void
     /**
      * Enable CORS support
      *
@@ -204,9 +218,10 @@ declare class Router {
      * Handle requests
      *
      * @param {Request} request
+     * @param {any=} extend
      * @returns {Response}
      */
-    handle(request: Request): Response
+    handle(request: Request, extend?: any): Response
 }
 declare namespace Router {
     export { Route, RouterRequest, RouterResponse, RouterNext, RouterHandler, RouterCorsConfig }
@@ -266,15 +281,19 @@ type RouterRequest = {
      */
     method: string
     /**
+     * Object containing request headers
+     */
+    headers: Headers
+    /**
+     * URL String
+     */
+    url: string
+    /**
      * Object containing all parameters defined in the url string
      */
     params: {
         [key: string]: string
     }
-    /**
-     * Object containing request headers
-     */
-    headers: Headers
     /**
      * Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
      */
