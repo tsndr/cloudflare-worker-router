@@ -298,6 +298,11 @@ type RouterRequest = {
      * Only available if method is `POST`, `PUT` or `PATCH`. Contains either the received body string or a parsed object if valid JSON was sent.
      */
     body: any
+
+    /**
+     * Make it user extendable
+     */
+    [key: string]: any
 }
 /**
  * Response Object
