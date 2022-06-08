@@ -324,7 +324,7 @@ type RouterResponse = {
      * Either an `object` (will be converted to JSON) or a string
      */
     body: {
-        [key: string]: string
+        [key: string]: any
     } | string
     /**
      * Upgraded websocket connection
