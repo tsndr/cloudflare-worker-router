@@ -18,14 +18,14 @@ declare class Router {
      * Global Handlers
      * 
      * @protected
-     * @type {Handler[]}
+     * @type {RouterHandler[]}
      */
-    protected globalHandlers: Handler[]
+    protected globalHandlers: RouterHandler[]
     /**
      * Debug Mode
      * 
      * @protected
-     * @type {boolean}
+     * @type {boolean=false}
      */
     protected debugMode: boolean = false
     /**
