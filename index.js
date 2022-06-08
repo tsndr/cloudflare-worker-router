@@ -385,16 +385,16 @@ class Router {
                 return res.raw
             }
 
-            const resInit = {
+            const resOpts = {
                 status: res.status || (res.body ? 200 : 204),
                 headers: res.headers
             }
 
             if (res.webSocket) {
-                resInit.webSocket = res.webSocket
+                resOpts.webSocket = res.webSocket
             }
 
-            return new Response(res.body, resInit)
+            return new Response([101, 204, 205, 304].includes(resOpts.status) ? null : res.body, resOpts)
         } catch(err) {
             console.error(err)
             return new Response(this.debugMode ? err.stack : '', { status: 500 })
