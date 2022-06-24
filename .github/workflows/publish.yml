@@ -1,8 +1,8 @@
-name: Publish
+name: Publish (main)
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   publish-npm:
@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
-      - run: npm publish --access public
+      - run: npm publish --tag latest --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -25,6 +25,6 @@ jobs:
         with:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
-      - run: npm publish --access public
+      - run: npm publish --tag latest --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
