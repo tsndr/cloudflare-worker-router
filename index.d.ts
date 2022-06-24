@@ -224,7 +224,7 @@ declare class Router {
     handle(request: Request, extend?: any): Response
 }
 declare namespace Router {
-    export { Route, RouterRequest, RouterResponse, RouterNext, RouterHandler, RouterCorsConfig }
+    export { Route, RouterCorsConfig, RouterHandler, RouterRequest, RouterResponse, RouterNext }
 }
 /**
  * Route Object
