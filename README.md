@@ -1,7 +1,11 @@
 # Cloudflare Workers Router
 
 ---
-**PRE-RELEASE: This branch is only for use with [wrangler2](https://github.com/cloudflare/wrangler2)!**
+### **PRE-RELEASE**
+
+**This branch is only for use with [wrangler2](https://github.com/cloudflare/wrangler2) and might also not work reliably!**
+
+**USE AT YOUR OWN RISK!**
 
 ---
 
@@ -10,6 +14,7 @@ Cloudflare Workers Router is a super lightweight router (3.6 kB) with middleware
 When I was trying out Cloudflare Workers I almost immediately noticed how fast it was compared to other serverless offerings. So I wanted to build a full-fledged API to see how it performs doing real work, but since I wasn't able to find a router that suited my needs I created my own.
 
 I worked a lot with [Express.js](https://expressjs.com/) in the past and really enjoyed their middleware approach, but since none of the available Cloudflare Worker routers offered middleware support at the time, I felt the need to create this router.
+
 
 ## Contents
 
@@ -23,20 +28,22 @@ I worked a lot with [Express.js](https://expressjs.com/) in the past and really 
 ### Simple Example
 
 ```javascript
-const Router = require('@tsndr/cloudflare-worker-router')
+import Router from '@tsndr/cloudflare-worker-router'
+
+// Initialize router
 const router = new Router()
 
 // Enabling buildin CORS support
 router.cors()
 
 // Register global middleware
-router.use((req, res, next) => {
+router.use(({ req, res, next }) => {
   res.headers.set('X-Global-Middlewares', 'true')
   next()
 })
 
 // Simple get
-router.get('/user', (req, res) => {
+router.get('/user', ({ req, res }) => {
   res.body = {
     data: {
       id: 1,
@@ -46,7 +53,7 @@ router.get('/user', (req, res) => {
 })
 
 // Post route with url parameter
-router.post('/user/:id', (req, res) => {
+router.post('/user/:id', ({ req, res }) => {
 
   const userId = req.params.id
   
@@ -64,7 +71,7 @@ router.post('/user/:id', (req, res) => {
 })
 
 // Delete route using a middleware
-router.delete('/user/:id', (req, res, next) => {
+router.delete('/user/:id', ({ req, res, next }) => {
 
   if (!apiTokenIsCorrect) {
     res.status = 401
@@ -80,9 +87,11 @@ router.delete('/user/:id', (req, res, next) => {
 })
 
 // Listen Cloudflare Workers Fetch Event
-addEventListener('fetch', event => {
-  event.respondWith(router.handle(event.request))
-})
+export default {
+  async fetch(request, env, ctx) {
+    return router.handle(env, request)
+  }
+}
 ```
 
 
@@ -141,6 +150,15 @@ Supports the use of dynamic parameters, prefixed with a `:` (i.e. `/user/:userId
 An unlimited number of functions getting [`req`](#req-object) and [`res`](#res-object) passed into them.
 
 
+### `ctx`-Object
+Key       | Type                | Description
+--------- | ------------------- | -----------
+`env`     | `object`            | Environment
+`req`     | `req`-Object        | Request Object
+`res`     | `res`-Object        | Response Object
+`next`    | `next`-Handler      | Next Handler
+
+
 ### `req`-Object
 
 Key       | Type                | Description
@@ -150,6 +168,7 @@ Key       | Type                | Description
 `method`  | `string`            | HTTP request method
 `params`  | `object`            | Object containing all parameters defined in the url string
 `query`   | `object`            | Object containing all query parameters
+
 
 ### `res`-Object
 
@@ -167,6 +186,7 @@ Key         | Type                | Description
 
 You can use [wrangler2](https://github.com/cloudflare/wrangler2) to generate a new Cloudflare Workers project based on this router by running the following command from your terminal:
 
+// TODO: Needs update!
 ```
 wrangler generate myapp https://github.com/tsndr/cloudflare-worker-router-template
 ```
@@ -191,10 +211,5 @@ wrangler dev
 If you already have a wrangler project you can install the router like this:
 
 ```
-npm i @tsndr/cloudflare-worker-router
+npm i @tsndr/cloudflare-worker-router@pre
 ```
-
-
-### Serverless
-
-To deploy using serverless add a [`serverless.yml`](https://serverless.com/framework/docs/providers/cloudflare/) file.
