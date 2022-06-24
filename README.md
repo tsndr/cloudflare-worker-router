@@ -7,7 +7,7 @@
 
 **USE AT YOUR OWN RISK!**
 
-See [Migration Guide](MIGRATION.md)
+See [Migration Guide](https://github.com/tsndr/cloudflare-worker-router/blob/v2-pre/MIGRATION.md)
 
 ---
 
