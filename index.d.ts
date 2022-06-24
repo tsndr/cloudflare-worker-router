@@ -37,15 +37,25 @@ declare class Router {
     protected corsConfig: RouterCorsConfig
     /**
      * Route Object
-     *
+     * 
      * @typedef Route
      * @property {string} method HTTP request method
      * @property {string} url URL String
      * @property {RouterHandler[]} handlers Array of handler functions
      */
+
+    /**
+     * Router Context
+     * 
+     * @typedef RouterContext
+     * @property {Object<string, string>} env Environment
+     * @property {RouterRequest} req Request Object
+     * @property {RouterResponse} res Response Object
+     * @property {RouterNext} next Next Handler
+     */
     /**
      * Request Object
-     *
+     * 
      * @typedef RouterRequest
      * @property {string} method HTTP request method
      * @property {Object<string, string>} params Object containing all parameters defined in the url string
@@ -56,7 +66,7 @@ declare class Router {
      */
     /**
      * Response Object
-     *
+     * 
      * @typedef RouterResponse
      * @property {Headers} headers Response headers object
      * @property {number} status Return status code (default: `204`)
@@ -65,17 +75,15 @@ declare class Router {
      */
     /**
      * Next Function
-     *
+     * 
      * @callback RouterNext
      * @returns {Promise}
      */
     /**
      * Handler Function
-     *
+     * 
      * @callback RouterHandler
-     * @param {Request} request
-     * @param {Response} response
-     * @param {next} next
+     * @param {RouterContext} ctx
      */
     /**
      * Register global handler
@@ -217,11 +225,12 @@ declare class Router {
     /**
      * Handle requests
      *
+     * @param {any} env
      * @param {Request} request
      * @param {any=} extend
      * @returns {Response}
      */
-    handle(request: Request, extend?: any): Response
+    handle(env: any, request: Request, extend?: any): Response
 }
 declare namespace Router {
     export { Route, RouterRequest, RouterResponse, RouterNext, RouterHandler, RouterCorsConfig }
@@ -271,7 +280,33 @@ type RouterCorsConfig = {
 /**
  * Handler Function
  */
-type RouterHandler = (req: RouterRequest, res: RouterResponse, next: RouterNext) => any
+type RouterHandler = (ctx: RouterContext) => any
+
+/**
+ * Router Context
+ */
+type RouterContext = {
+    /**
+     * Environment
+     */
+    env: Object<string, string>
+
+    /**
+     * Request Object
+     */
+    req: RouterRequest
+
+    /**
+     * Response Object
+     */
+    res: RouterResponse
+
+    /**
+     * Next Handler
+     */
+    next: RouterNext
+}
+
 /**
  * Request Object
  */

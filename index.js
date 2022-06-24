@@ -48,6 +48,16 @@ class Router {
      */
 
     /**
+     * Router Context
+     * 
+     * @typedef RouterContext
+     * @property {Object<string, string>} env Environment
+     * @property {RouterRequest} req Request Object
+     * @property {RouterResponse} res Response Object
+     * @property {RouterNext} next Next Handler
+     */
+
+    /**
      * Request Object
      * 
      * @typedef RouterRequest
@@ -80,9 +90,7 @@ class Router {
      * Handler Function
      * 
      * @callback RouterHandler
-     * @param {RouterRequest} request
-     * @param {RouterResponse} response
-     * @param {RouterNext} next
+     * @param {RouterContext} ctx
      */
 
     /**
@@ -308,11 +316,12 @@ class Router {
     /**
      * Handle requests
      * 
+     * @param {any} env
      * @param {Request} request
      * @param {any=} extend
      * @returns {Response}
      */
-    async handle(request, extend = {}) {
+    async handle(env, request, extend = {}) {
         try {
             if (request instanceof Event) {
                 request = request.request
@@ -373,7 +382,7 @@ class Router {
                     throw new Error('next() called multiple times')
                 prevIndex = index
                 if (typeof handlers[index] === 'function')
-                    await handlers[index](req, res, async () => await runner(index + 1))
+                    await handlers[index]({ env, req, res, next: async () => await runner(index + 1) })
             }
             await runner(0)
             if (typeof res.body === 'object') {
