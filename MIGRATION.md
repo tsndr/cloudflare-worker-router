@@ -74,7 +74,7 @@ router.get('/user', (<span style="color:rgb(225, 75, 75);font-weight:bold;">{</s
 
 ## Fetch / `router.handle()`
 
-Be aware that with `v2.0.0` the parameters of `router.handle()` changed.
+<span style="color:rgb(225, 75, 75);font-weight:bold;">!</span> Be aware that with `v2.0.0` the parameters of `router.handle()` changed <span style="color:rgb(225, 75, 75);font-weight:bold;">!</span> 
 
 
 ### Before
