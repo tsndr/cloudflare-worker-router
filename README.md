@@ -1,13 +1,15 @@
 # Cloudflare Workers Router
 
-Cloudflare Workers Router is a super lightweight router (3.6 kB) with middleware support and ZERO dependencies for Cloudflare Workers, inspired by the [Express.js](https://expressjs.com/) syntax.
+---
+**PRE-RELEASE: This branch is only for use with [wrangler2](https://github.com/cloudflare/wrangler2)!**
+
+---
+
+Cloudflare Workers Router is a super lightweight router (3.6 kB) with middleware support and ZERO dependencies for Cloudflare Workers.
 
 When I was trying out Cloudflare Workers I almost immediately noticed how fast it was compared to other serverless offerings. So I wanted to build a full-fledged API to see how it performs doing real work, but since I wasn't able to find a router that suited my needs I created my own.
 
 I worked a lot with [Express.js](https://expressjs.com/) in the past and really enjoyed their middleware approach, but since none of the available Cloudflare Worker routers offered middleware support at the time, I felt the need to create this router.
-
-Attention: It's not directly compatible with [Express.js](https://expressjs.com/), it only follows the same approach.
-
 
 ## Contents
 
@@ -161,9 +163,9 @@ Key         | Type                | Description
 
 ## Setup
 
-### Wrangler
+### Wrangler2
 
-You can use [wrangler](https://github.com/cloudflare/wrangler) to generate a new Cloudflare Workers project based on this router by running the following command from your terminal:
+You can use [wrangler2](https://github.com/cloudflare/wrangler2) to generate a new Cloudflare Workers project based on this router by running the following command from your terminal:
 
 ```
 wrangler generate myapp https://github.com/tsndr/cloudflare-worker-router-template
