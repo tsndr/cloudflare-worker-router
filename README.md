@@ -7,7 +7,10 @@
 
 **USE AT YOUR OWN RISK!**
 
+See [Migration Guide](MIGRATION.md)
+
 ---
+
 
 Cloudflare Workers Router is a super lightweight router (3.6 kB) with middleware support and ZERO dependencies for Cloudflare Workers.
 
@@ -101,6 +104,7 @@ export default {
 
 Enable or disable debug mode. Which will return the `error.stack` in case of an exception instead of and empty `500` response. Debug mode is disabled by default.
 
+
 #### `state`
 State is a `boolean` which determines if debug mode should be enabled or not (default: `true`)
 
@@ -108,6 +112,7 @@ State is a `boolean` which determines if debug mode should be enabled or not (de
 ### `router.use(handler)`
 
 Register a global middleware handler.
+
 
 #### `handler` (function)
 
@@ -117,6 +122,7 @@ Handler is a `function` which will be called for every request.
 ### `router.cors([config])`
 
 If enabled will overwrite other `OPTIONS` requests.
+
 
 #### `config` (object, optional)
 
@@ -144,6 +150,7 @@ Key                    | Type      | Default Value
 
 The URL starting with a `/`.
 Supports the use of dynamic parameters, prefixed with a `:` (i.e. `/user/:userId/edit`) which will be available through the [`req`-Object](#req-object) (i.e. `req.params.userId`).
+
 
 #### `handlers` (function, optional)
 
