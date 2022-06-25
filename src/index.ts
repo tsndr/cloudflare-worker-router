@@ -286,9 +286,11 @@ class Router {
      * Debug Mode
      * 
      * @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
+     * @returns {Router}
      */
-    public debug(state = true) {
+    public debug(state = true): Router {
         this.debugMode = state
+        return this
     }
 
     /**
