@@ -187,8 +187,9 @@ declare class Router {
      * Debug Mode
      * 
      * @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
+     * @returns {Router}
      */
-    debug(state?: boolean): void
+    debug(state?: boolean): Router
     /**
      * Enable CORS support
      *
