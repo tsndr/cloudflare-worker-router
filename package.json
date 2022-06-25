@@ -2,9 +2,11 @@
   "name": "@tsndr/cloudflare-worker-router",
   "version": "2.0.0-pre.7",
   "description": "",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "scripts": {},
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rm -rf dist/* && tsc"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tsndr/cloudflare-worker-router.git"
@@ -27,5 +29,9 @@
   "bugs": {
     "url": "https://github.com/tsndr/cloudflare-worker-router/issues"
   },
-  "homepage": "https://github.com/tsndr/cloudflare-worker-router#readme"
+  "homepage": "https://github.com/tsndr/cloudflare-worker-router#readme",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.13.0",
+    "typescript": "^4.7.4"
+  }
 }

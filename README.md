@@ -12,7 +12,7 @@ See [Migration Guide](https://github.com/tsndr/cloudflare-worker-router/blob/v2-
 ---
 
 
-Cloudflare Workers Router is a super lightweight router (3.6 kB) with middleware support and ZERO dependencies for Cloudflare Workers.
+Cloudflare Workers Router is a super lightweight router (2.30 KiB) with middleware support and **ZERO dependencies** for [Cloudflare Workers](https://workers.cloudflare.com/).
 
 When I was trying out Cloudflare Workers I almost immediately noticed how fast it was compared to other serverless offerings. So I wanted to build a full-fledged API to see how it performs doing real work, but since I wasn't able to find a router that suited my needs I created my own.
 
@@ -91,7 +91,7 @@ router.delete('/user/:id', ({ req, res, next }) => {
 
 // Listen Cloudflare Workers Fetch Event
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request, env) {
     return router.handle(env, request)
   }
 }
