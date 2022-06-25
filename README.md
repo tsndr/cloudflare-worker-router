@@ -77,6 +77,13 @@ router.delete('/user/:id', (req, res, next) => {
   // Do stuff...
 })
 
+// Custom 404 page
+router.get('*', (req, res) => {
+    res.status = 404
+    res.headers.set('Content-Type', 'text/html; charset=utf-8')
+    res.body = "<h1>No one's home, sorry!</h1>"
+})
+
 // Listen Cloudflare Workers Fetch Event
 addEventListener('fetch', event => {
   event.respondWith(router.handle(event.request))
