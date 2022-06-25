@@ -16,11 +16,11 @@ jobs:
       - name: Publish to npmjs
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: npm publish --tag v1 --access public
+        run: npm publish --tag legacy --access public
       - uses: actions/setup-node@v3
         with:
           registry-url: https://npm.pkg.github.com/
       - name: Publish to GPR
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        run: npm publish --tag v1 --access public
+        run: npm publish --tag legacy --access public
