@@ -310,7 +310,7 @@ class Router {
             }
             request.query = query
             return true
-        })
+        }) || this.routes.find(r => r.url === '*' && [request.method, '*'].includes(r.method))
     }
 
     /**
