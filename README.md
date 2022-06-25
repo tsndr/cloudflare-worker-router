@@ -203,7 +203,7 @@ wrangler dev
 If you already have a wrangler project you can install the router like this:
 
 ```
-npm i @tsndr/cloudflare-worker-router
+npm i @tsndr/cloudflare-worker-router@legacy
 ```
 
 
