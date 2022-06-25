@@ -17,15 +17,14 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      - name: Publish to npmjs.org
+      - name: Publish to npmjs
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         run: npm publish --tag pre --access public
       - uses: actions/setup-node@v1
         with:
-          node-version: 16
           registry-url: https://npm.pkg.github.com/
-      - name: Publish to npm.pkg.github.com
+      - name: Publish to GPR
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: npm publish --tag pre --access public
