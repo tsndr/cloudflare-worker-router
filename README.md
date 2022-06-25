@@ -81,7 +81,7 @@ router.delete('/user/:id', (req, res, next) => {
 router.get('*', (req, res) => {
     res.status = 404
     res.headers.set('Content-Type', 'text/html; charset=utf-8')
-    res.body = "<h1>No one's home, sorry!</h1>"
+    res.body = '<h1>404 - Not Found</h1>'
 })
 
 // Listen Cloudflare Workers Fetch Event
