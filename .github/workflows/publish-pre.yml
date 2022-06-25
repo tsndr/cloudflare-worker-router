@@ -13,8 +13,8 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-      - run: npm run build
-      - run: npm publish --tag pre --access public
+      - name: Build & Publish
+        run: npm ci && npm run build && npm publish --tag pre --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
-      - run: npm run build
-      - run: npm publish --tag pre --access public
+      - name: Build & Publish
+        run: npm ci && npm run build && npm publish --tag pre --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
