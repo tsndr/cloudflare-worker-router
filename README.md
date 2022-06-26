@@ -3,7 +3,7 @@
 ---
 ### ❗️ Compatibility ❗️
 
-It's highly recommended to update to [v2.x.x](https://github.com/tsndr/cloudflare-worker-router/MIGRATION.md) or later and also update to [wrangler2](https://developers.cloudflare.com/workers/wrangler/migration/migrating-from-wrangler-1/).
+It's highly recommended to update to [v2.x.x](https://github.com/tsndr/cloudflare-worker-router/blob/main/MIGRATION.md) or later and also update to [wrangler2](https://developers.cloudflare.com/workers/wrangler/migration/migrating-from-wrangler-1/).
 
 ---
 
