@@ -188,7 +188,7 @@ CLI Tool | Router
 [wrangler2](https://github.com/cloudflare/wrangler2#readme) | Use `v2.x.x` or later.
 [@cloudflare/wrangler](https://github.com/cloudflare/wrangler#readme) | Use `v1.x.x`, [here](https://github.com/tsndr/cloudflare-worker-router/tree/v1#readme).
 
-See [Migration from v1.x.x to v2.x.x](https://github.com/tsndr/cloudflare-worker-router/blob/v2-pre/MIGRATION.md) if you want to update.
+See [Migration from v1.x.x to v2.x.x](https://github.com/tsndr/cloudflare-worker-router/MIGRATION.md) if you want to update.
 
 ---
 
@@ -197,7 +197,7 @@ See [Migration from v1.x.x to v2.x.x](https://github.com/tsndr/cloudflare-worker
 Please follow Cloudflare's [Get started guide](https://developers.cloudflare.com/workers/get-started/guide/), then install the router using this command
 
 ```bash
-npm i -D @tsndr/cloudflare-worker-router@pre
+npm i -D @tsndr/cloudflare-worker-router
 ```
 
 and replace your `index.ts` / `index.js` with one of the following scripts
