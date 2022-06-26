@@ -188,7 +188,7 @@ CLI Tool | Router
 [wrangler2](https://github.com/cloudflare/wrangler2#readme) | Use `v2.x.x` or later.
 [@cloudflare/wrangler](https://github.com/cloudflare/wrangler#readme) | Use `v1.x.x`, [here](https://github.com/tsndr/cloudflare-worker-router/tree/legacy#readme).
 
-See [Migration from v1.x.x to v2.x.x](https://github.com/tsndr/cloudflare-worker-router/blob/main/MIGRATION.md) if you want to update.
+See [Migration from v1.x.x to v2.x.x](https://github.com/tsndr/cloudflare-worker-router/blob/main/MIGRATION.md#migration-guide) if you want to update.
 
 ---
 
