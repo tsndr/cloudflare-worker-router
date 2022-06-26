@@ -1,4 +1,4 @@
-name: Publish (v1)
+name: Publish (legacy)
 
 on:
   release:
