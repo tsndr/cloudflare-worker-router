@@ -4,12 +4,28 @@ From `v1.x.x` to `v2.x.x`.
 
 ## Contents
 
+- [Preparation](#preparation)
+- [Update](#update)
 - [Import / Require](#import--require)
 - [Routes](#routes)
 - [Fetch](#fetch--routerhandle)
 
 
+## Preparation
+
+Follow Cloudflare's [Migration Guide](https://developers.cloudflare.com/workers/wrangler/migration/migrating-from-wrangler-1/) to update your protject to [wrangler2](https://github.com/cloudflare/wrangler2).
+
+## Update
+
+Update to the latest version verstion
+
+```bash
+npm i -D @tsndr/cloudflare-worker-router
+```
+
 ## Import / Require
+
+Switch to ESModules.
 
 ### Before
 
