@@ -1,11 +1,11 @@
 /**
-     * Route Object
-     * 
-     * @typedef Route
-     * @property {string} method HTTP request method
-     * @property {string} url URL String
-     * @property {RouterHandler[]} handlers Array of handler functions
-     */
+ * Route Object
+ * 
+ * @typedef Route
+ * @property {string} method HTTP request method
+ * @property {string} url URL String
+ * @property {RouterHandler[]} handlers Array of handler functions
+ */
  interface Route {
     method: string
     url: string
@@ -38,7 +38,7 @@ interface RouterContext {
  * @property {RouterRequestQuery} query Object containing all query parameters
  * @property {Headers} headers Request headers object
  * @property {any} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
- * @property {IncomingRequestCfProperties=} cf object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
+ * @property {IncomingRequestCfProperties} [cf] object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
  */
 interface RouterRequest {
     url: string
@@ -50,10 +50,20 @@ interface RouterRequest {
     cf?: IncomingRequestCfProperties
 }
 
+/**
+ * Request Parameters
+ * 
+ * @typedef RouterRequestParams
+ */
 interface RouterRequestParams {
     [key: string]: string
 }
 
+/**
+ * Request Query
+ * 
+ * @typedef RouterRequestQuery
+ */
 interface RouterRequestQuery {
     [key: string]: string
 }
@@ -63,9 +73,9 @@ interface RouterRequestQuery {
  * 
  * @typedef RouterResponse
  * @property {Headers} headers Response headers object
- * @property {number=204} status Return status code (default: `204`)
- * @property {any=} body Either an `object` (will be converted to JSON) or a string
- * @property {Response=} raw A response object that is to be returned, this will void all other res properties and return this as is.
+ * @property {number} [status=204] Return status code (default: `204`)
+ * @property {any} [body] Either an `object` (will be converted to JSON) or a string
+ * @property {Response} [raw] A response object that is to be returned, this will void all other res properties and return this as is.
  */
 interface RouterResponse {
     headers: Headers
@@ -100,11 +110,11 @@ interface RouterHandler {
  * CORS Config
  * 
  * @typedef RouterCorsConfig
- * @property {string} allowOrigin Access-Control-Allow-Origin (default: `*`)
- * @property {string} allowMethods Access-Control-Allow-Methods (default: `*`)
- * @property {string} allowHeaders Access-Control-Allow-Headers (default: `*`)
- * @property {number} maxAge Access-Control-Max-Age (default: `86400`)
- * @property {number} optionsSuccessStatus Return status code for OPTIONS request (default: `204`)
+ * @property {string} [allowOrigin="*"] Access-Control-Allow-Origin (default: `*`)
+ * @property {string} [allowMethods="*"] Access-Control-Allow-Methods (default: `*`)
+ * @property {string} [allowHeaders="*"] Access-Control-Allow-Headers (default: `*`)
+ * @property {number} [maxAge=86400] Access-Control-Max-Age (default: `86400`)
+ * @property {number} [optionsSuccessStatus=204] Return status code for OPTIONS request (default: `204`)
  */
 interface RouterCorsConfig {
     allowOrigin: string
@@ -118,9 +128,8 @@ interface RouterCorsConfig {
 /**
  * Router
  * 
- * @class
- * @constructor
  * @public
+ * @class
  */
 class Router {
 
@@ -296,17 +305,16 @@ class Router {
     /**
      * Enable CORS support
      * 
-     * @param {RouterCorsConfig} config
+     * @param {RouterCorsConfig} [config]
      * @returns {Router}
      */
-    public cors(config: RouterCorsConfig): Router {
-        config = config || {}
+    public cors(config?: RouterCorsConfig): Router {
         this.corsConfig = {
-            allowOrigin: config.allowOrigin || '*',
-            allowMethods: config.allowMethods || '*',
-            allowHeaders: config.allowHeaders || '*, Authorization',
-            maxAge: config.maxAge || 86400,
-            optionsSuccessStatus: config.optionsSuccessStatus || 204
+            allowOrigin: config?.allowOrigin || '*',
+            allowMethods: config?.allowMethods || '*',
+            allowHeaders: config?.allowHeaders || '*, Authorization',
+            maxAge: config?.maxAge || 86400,
+            optionsSuccessStatus: config?.optionsSuccessStatus || 204
         }
         return this
     }
@@ -365,7 +373,7 @@ class Router {
      * 
      * @param {any} env
      * @param {Request} request
-     * @param {any=} extend
+     * @param {any} [extend]
      * @returns {Response}
      */
     public async handle(env: any, request: Request, extend: any = {}) {
@@ -386,7 +394,7 @@ class Router {
                         'Access-Control-Allow-Origin': this.corsConfig.allowOrigin,
                         'Access-Control-Allow-Methods': this.corsConfig.allowMethods,
                         'Access-Control-Allow-Headers': this.corsConfig.allowHeaders,
-                        'Access-Control-Max-Age': this.corsConfig.maxAge.toString()
+                        'Access-Control-Max-Age': this.corsConfig.maxAge!.toString()
                     },
                     status: this.corsConfig.optionsSuccessStatus
                 })
