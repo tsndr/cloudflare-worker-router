@@ -6,7 +6,7 @@
  * @property {string} url URL String
  * @property {RouterHandler[]} handlers Array of handler functions
  */
- interface Route {
+ export interface Route {
     method: string
     url: string
     handlers: RouterHandler[]
@@ -21,7 +21,7 @@
  * @property {RouterResponse} res Response Object
  * @property {RouterNext} next Next Handler
  */
-interface RouterContext {
+export interface RouterContext {
     env: any
     req: RouterRequest
     res: RouterResponse
@@ -40,7 +40,7 @@ interface RouterContext {
  * @property {any} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
  * @property {IncomingRequestCfProperties} [cf] object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
  */
-interface RouterRequest {
+export interface RouterRequest {
     url: string
     method: string
     params: RouterRequestParams
@@ -48,6 +48,7 @@ interface RouterRequest {
     headers: Headers
     body: any
     cf?: IncomingRequestCfProperties
+    [key: string]: any
 }
 
 /**
@@ -55,7 +56,7 @@ interface RouterRequest {
  * 
  * @typedef RouterRequestParams
  */
-interface RouterRequestParams {
+export interface RouterRequestParams {
     [key: string]: string
 }
 
@@ -64,7 +65,7 @@ interface RouterRequestParams {
  * 
  * @typedef RouterRequestQuery
  */
-interface RouterRequestQuery {
+export interface RouterRequestQuery {
     [key: string]: string
 }
 
@@ -77,7 +78,7 @@ interface RouterRequestQuery {
  * @property {any} [body] Either an `object` (will be converted to JSON) or a string
  * @property {Response} [raw] A response object that is to be returned, this will void all other res properties and return this as is.
  */
-interface RouterResponse {
+export interface RouterResponse {
     headers: Headers
     status?: number
     body?: any
@@ -91,7 +92,7 @@ interface RouterResponse {
  * @callback RouterNext
  * @returns {Promise}
  */
-interface RouterNext {
+export interface RouterNext {
     (): Promise<void>
 }
 
@@ -102,7 +103,7 @@ interface RouterNext {
  * @param {RouterContext} ctx
  * @returns {Promise<void> | void}
  */
-interface RouterHandler {
+export interface RouterHandler {
     (ctx: RouterContext): Promise<void> | void
 }
 
@@ -116,7 +117,7 @@ interface RouterHandler {
  * @property {number} [maxAge=86400] Access-Control-Max-Age (default: `86400`)
  * @property {number} [optionsSuccessStatus=204] Return status code for OPTIONS request (default: `204`)
  */
-interface RouterCorsConfig {
+export interface RouterCorsConfig {
     allowOrigin: string
     allowMethods: string
     allowHeaders: string
@@ -124,14 +125,13 @@ interface RouterCorsConfig {
     optionsSuccessStatus: number
 }
 
-
 /**
  * Router
  * 
  * @public
  * @class
  */
-class Router {
+export default class Router {
 
     /**
      * Router Array
@@ -448,5 +448,3 @@ class Router {
         }
     }
 }
-
-export default Router
