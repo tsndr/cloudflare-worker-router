@@ -16,7 +16,7 @@
  * Router Context
  * 
  * @typedef RouterContext
- * @property {Object<string, string>} env Environment
+ * @property {RouterEnv} env Environment
  * @property {RouterRequest} req Request Object
  * @property {RouterResponse} res Response Object
  * @property {RouterNext} next Next Handler
@@ -37,7 +37,7 @@ export interface RouterContext {
  * @property {RouterRequestParams} params Object containing all parameters defined in the url string
  * @property {RouterRequestQuery} query Object containing all query parameters
  * @property {Headers} headers Request headers object
- * @property {any} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
+ * @property {string | any} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
  * @property {IncomingRequestCfProperties} [cf] object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
  */
 export interface RouterRequest {
@@ -46,7 +46,7 @@ export interface RouterRequest {
     params: RouterRequestParams
     query: RouterRequestQuery
     headers: Headers
-    body: any
+    body: string | any
     cf?: IncomingRequestCfProperties
     [key: string]: any
 }
@@ -75,13 +75,13 @@ export interface RouterRequestQuery {
  * @typedef RouterResponse
  * @property {Headers} headers Response headers object
  * @property {number} [status=204] Return status code (default: `204`)
- * @property {any} [body] Either an `object` (will be converted to JSON) or a string
+ * @property {string | any} [body] Either an `object` (will be converted to JSON) or a string
  * @property {Response} [raw] A response object that is to be returned, this will void all other res properties and return this as is.
  */
 export interface RouterResponse {
     headers: Headers
     status?: number
-    body?: any
+    body?: string | any
     raw?: Response,
     webSocket?: WebSocket
 }
@@ -90,7 +90,7 @@ export interface RouterResponse {
  * Next Function
  * 
  * @callback RouterNext
- * @returns {Promise}
+ * @returns {Promise<void>}
  */
 export interface RouterNext {
     (): Promise<void>
@@ -143,6 +143,9 @@ export default class Router {
 
     /**
      * Global Handlers
+     * 
+     * @protected
+     * @type {RouterHandler[]}
      */
     protected globalHandlers: RouterHandler[] = []
 
@@ -297,7 +300,7 @@ export default class Router {
      * @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
      * @returns {Router}
      */
-    public debug(state = true): Router {
+    public debug(state: boolean = true): Router {
         this.debugMode = state
         return this
     }
@@ -341,8 +344,8 @@ export default class Router {
      * Get Route by request
      * 
      * @private
-     * @param {Request} request
-     * @returns {RouterRequest | undefined}
+     * @param {RouterRequest} request
+     * @returns {Route | undefined}
      */
     private getRoute(request: RouterRequest): Route | undefined {
         const url = new URL(request.url)
