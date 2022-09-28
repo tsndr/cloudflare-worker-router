@@ -6,7 +6,7 @@
  * @property {string} url URL String
  * @property {RouterHandler[]} handlers Array of handler functions
  */
- export interface Route {
+export interface Route {
     method: string
     url: string
     handlers: RouterHandler[]
@@ -123,6 +123,7 @@ export interface RouterCorsConfig {
     allowHeaders: string
     maxAge: number
     optionsSuccessStatus: number
+    disableCORS?: boolean
 }
 
 /**
@@ -168,7 +169,8 @@ export default class Router {
         allowMethods: '*',
         allowHeaders: '*',
         maxAge: 86400,
-        optionsSuccessStatus: 204
+        optionsSuccessStatus: 204,
+        disableCORS: false
     }
 
     /**
@@ -306,6 +308,17 @@ export default class Router {
     }
 
     /**
+     * Disable CORS
+     * 
+     * @param {boolean} [state=true] Whether to turn on or off CORS (default: true)
+     * @returns {Router}
+     */
+    public disableCORS(state: boolean = true): Router {
+        this.corsConfig.disableCORS = state
+        return this
+    }
+
+    /**
      * Enable CORS support
      * 
      * @param {RouterCorsConfig} [config]
@@ -339,7 +352,7 @@ export default class Router {
         })
         return this
     }
-
+    
     /**
      * Get Route by request
      * 
@@ -391,13 +404,13 @@ export default class Router {
                 query: {},
                 body: ''
             }
-            if (req.method === 'OPTIONS' && Object.keys(this.corsConfig).length) {
+            if (req.method === 'OPTIONS' && Object.keys(this.corsConfig).length && !this.corsConfig.disableCORS) {
                 return new Response(null, {
                     headers: {
                         'Access-Control-Allow-Origin': this.corsConfig.allowOrigin,
                         'Access-Control-Allow-Methods': this.corsConfig.allowMethods,
                         'Access-Control-Allow-Headers': this.corsConfig.allowHeaders,
-                        'Access-Control-Max-Age': this.corsConfig.maxAge!.toString()
+                        'Access-Control-Max-Age': this.corsConfig.maxAge!.toString(),
                     },
                     status: this.corsConfig.optionsSuccessStatus
                 })
@@ -445,7 +458,7 @@ export default class Router {
             if (res.raw)
                 return res.raw
             return new Response([101, 204, 205, 304].includes(res.status || (res.body ? 200 : 204)) ? null : res.body, { status: res.status, headers: res.headers, webSocket: res.webSocket || null })
-        } catch(err) {
+        } catch (err) {
             console.error(err)
             return new Response(this.debugMode && err instanceof Error ? err.stack : '', { status: 500 })
         }
