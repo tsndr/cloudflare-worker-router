@@ -118,11 +118,11 @@ export interface RouterHandler {
  * @property {number} [optionsSuccessStatus=204] Return status code for OPTIONS request (default: `204`)
  */
 export interface RouterCorsConfig {
-    allowOrigin: string
-    allowMethods: string
-    allowHeaders: string
-    maxAge: number
-    optionsSuccessStatus: number
+    allowOrigin?: string
+    allowMethods?: string
+    allowHeaders?: string
+    maxAge?: number
+    optionsSuccessStatus?: number
 }
 
 /**
@@ -163,13 +163,7 @@ export default class Router {
      * @protected
      * @type {RouterCorsConfig}
      */
-    protected corsConfig: RouterCorsConfig = {
-        allowOrigin: '*',
-        allowMethods: '*',
-        allowHeaders: '*',
-        maxAge: 86400,
-        optionsSuccessStatus: 204
-    }
+    protected corsConfig: RouterCorsConfig = {}
 
     /**
      * Register global handlers
@@ -391,14 +385,21 @@ export default class Router {
                 query: {},
                 body: ''
             }
-            if (req.method === 'OPTIONS' && Object.keys(this.corsConfig).length) {
+
+            const headers = new Headers()
+
+            if (this.corsConfig.allowOrigin)
+                headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
+            if (this.corsConfig.allowMethods)
+                headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
+            if (this.corsConfig.allowHeaders)
+                headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
+            if (this.corsConfig.maxAge)
+                headers.set('Access-Control-Max-Age', this.corsConfig.maxAge.toString())
+
+            if (req.method === 'OPTIONS') {
                 return new Response(null, {
-                    headers: {
-                        'Access-Control-Allow-Origin': this.corsConfig.allowOrigin,
-                        'Access-Control-Allow-Methods': this.corsConfig.allowMethods,
-                        'Access-Control-Allow-Headers': this.corsConfig.allowHeaders,
-                        'Access-Control-Max-Age': this.corsConfig.maxAge!.toString()
-                    },
+                    headers,
                     status: this.corsConfig.optionsSuccessStatus
                 })
             }
@@ -420,13 +421,7 @@ export default class Router {
             const route = this.getRoute(req)
             if (!route)
                 return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
-            const res: RouterResponse = { headers: new Headers() }
-            if (Object.keys(this.corsConfig).length) {
-                res.headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
-                res.headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
-                res.headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
-                res.headers.set('Access-Control-Max-Age', this.corsConfig.maxAge.toString())
-            }
+            const res: RouterResponse = { headers }
             const handlers = [...this.globalHandlers, ...route.handlers]
             let prevIndex = -1
             const runner = async (index: number) => {
