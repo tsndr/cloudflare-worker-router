@@ -340,6 +340,7 @@ export default class Router {
             url,
             handlers
         })
+
         return this
     }
 
@@ -353,23 +354,33 @@ export default class Router {
     private getRoute(request: RouterRequest): Route | undefined {
         const url = new URL(request.url)
         const pathArr = url.pathname.split('/').filter(i => i)
+
         return this.routes.find(r => {
             const routeArr = r.url.split('/').filter(i => i)
+
             if (![request.method, '*'].includes(r.method) || routeArr.length !== pathArr.length)
                 return false
+
             const params: RouterRequestParams = {}
+
             for (let i = 0; i < routeArr.length; i++) {
                 if (routeArr[i] !== pathArr[i] && routeArr[i][0] !== ':')
                     return false
+
                 if (routeArr[i][0] === ':')
                     params[routeArr[i].substring(1)] = pathArr[i]
             }
+
             request.params = params
+
             const query: any = {}
+
             for (const [k, v] of url.searchParams.entries()) {
                 query[k] = v
             }
+
             request.query = query
+
             return true
         }) || this.routes.find(r => r.url === '*' && [request.method, '*'].includes(r.method))
     }
@@ -380,9 +391,9 @@ export default class Router {
      * @param {any} env
      * @param {Request} request
      * @param {any} [extend]
-     * @returns {Response}
+     * @returns {Promise<Response>}
      */
-    public async handle(env: any, request: Request, extend: any = {}) {
+    public async handle(env: any, request: Request, extend: any = {}): Promise<Response> {
         try {
             const req: RouterRequest = {
                 ...extend,
@@ -394,8 +405,10 @@ export default class Router {
                 query: {},
                 body: ''
             }
+
             const headers = new Headers()
             const route = this.getRoute(req)
+
             if (this.corsEnabled) {
                 if (this.corsConfig.allowOrigin)
                     headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
@@ -413,8 +426,10 @@ export default class Router {
                     })
                 }
             }
+
             if (!route)
                 return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
+
             if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
                 if (req.headers.has('Content-Type') && req.headers.get('Content-Type')!.includes('json')) {
                     try {
@@ -430,24 +445,33 @@ export default class Router {
                     }
                 }
             }
+
             const res: RouterResponse = { headers }
             const handlers = [...this.globalHandlers, ...route.handlers]
             let prevIndex = -1
+
             const runner = async (index: number) => {
                 if (index === prevIndex)
                     throw new Error('next() called multiple times')
+
                 prevIndex = index
+
                 if (typeof handlers[index] === 'function')
                     await handlers[index]({ env, req, res, next: async () => await runner(index + 1) })
             }
+
             await runner(0)
+
             if (typeof res.body === 'object') {
                 if (!res.headers.has('Content-Type'))
                     res.headers.set('Content-Type', 'application/json')
+
                 res.body = JSON.stringify(res.body)
             }
+
             if (res.raw)
                 return res.raw
+
             return new Response([101, 204, 205, 304].includes(res.status || (res.body ? 200 : 204)) ? null : res.body, { status: res.status, headers: res.headers, webSocket: res.webSocket || null })
         } catch(err) {
             console.error(err)
