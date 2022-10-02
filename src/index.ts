@@ -166,6 +166,14 @@ export default class Router {
     protected corsConfig: RouterCorsConfig = {}
 
     /**
+     * CORS enabled
+     *-
+     * @protected
+     * @type {boolean}
+     */
+    protected corsEnabled: boolean = false
+
+    /**
      * Register global handlers
      * 
      * @param {RouterHandler[]} handlers
@@ -306,6 +314,7 @@ export default class Router {
      * @returns {Router}
      */
     public cors(config?: RouterCorsConfig): Router {
+        this.corsEnabled = true
         this.corsConfig = {
             allowOrigin: config?.allowOrigin || '*',
             allowMethods: config?.allowMethods || '*',
@@ -385,24 +394,27 @@ export default class Router {
                 query: {},
                 body: ''
             }
-
             const headers = new Headers()
+            const route = this.getRoute(req)
+            if (this.corsEnabled) {
+                if (this.corsConfig.allowOrigin)
+                    headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
+                if (this.corsConfig.allowMethods)
+                    headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
+                if (this.corsConfig.allowHeaders)
+                    headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
+                if (this.corsConfig.maxAge)
+                    headers.set('Access-Control-Max-Age', this.corsConfig.maxAge.toString())
 
-            if (this.corsConfig.allowOrigin)
-                headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
-            if (this.corsConfig.allowMethods)
-                headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
-            if (this.corsConfig.allowHeaders)
-                headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
-            if (this.corsConfig.maxAge)
-                headers.set('Access-Control-Max-Age', this.corsConfig.maxAge.toString())
-
-            if (req.method === 'OPTIONS') {
-                return new Response(null, {
-                    headers,
-                    status: this.corsConfig.optionsSuccessStatus
-                })
+                if (!route && req.method === 'OPTIONS') {
+                    return new Response(null, {
+                        headers,
+                        status: this.corsConfig.optionsSuccessStatus
+                    })
+                }
             }
+            if (!route)
+                return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
             if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
                 if (req.headers.has('Content-Type') && req.headers.get('Content-Type')!.includes('json')) {
                     try {
@@ -418,9 +430,6 @@ export default class Router {
                     }
                 }
             }
-            const route = this.getRoute(req)
-            if (!route)
-                return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
             const res: RouterResponse = { headers }
             const handlers = [...this.globalHandlers, ...route.handlers]
             let prevIndex = -1
