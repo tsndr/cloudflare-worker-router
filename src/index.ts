@@ -318,7 +318,7 @@ export default class Router {
         this.corsConfig = {
             allowOrigin: config?.allowOrigin || '*',
             allowMethods: config?.allowMethods || '*',
-            allowHeaders: config?.allowHeaders || '*, Authorization',
+            allowHeaders: config?.allowHeaders || '*',
             maxAge: config?.maxAge || 86400,
             optionsSuccessStatus: config?.optionsSuccessStatus || 204
         }
