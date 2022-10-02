@@ -24,7 +24,7 @@ import Router from '@tsndr/cloudflare-worker-router'
 // Initialize router
 const router = new Router()
 
-// Enabling buildin CORS support
+// Enabling build in CORS support
 router.cors()
 
 // Register global middleware
