@@ -19,7 +19,7 @@ I worked a lot with [Express.js](https://expressjs.com/) in the past and really 
 ### Simple Example
 
 ```javascript
-import Router from '@tsndr/cloudflare-worker-router'
+import { Router } from '@tsndr/cloudflare-worker-router'
 
 // Initialize router
 const router = new Router()
@@ -192,7 +192,7 @@ and replace your `index.ts` / `index.js` with one of the following scripts
 <summary>TypeScript (<code>src/index.ts</code>)</summary>
 
 ```typescript
-import Router from '@tsndr/cloudflare-worker-router'
+import { Router } from '@tsndr/cloudflare-worker-router'
 
 export interface Env {
   // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -221,7 +221,7 @@ export default {
 <summary>JavaScript (<code>src/index.js</code>)</summary>
 
 ```javascript
-import Router from '@tsndr/cloudflare-worker-router'
+import { Router } from '@tsndr/cloudflare-worker-router'
 
 const router = new Router()
 

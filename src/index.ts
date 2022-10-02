@@ -131,7 +131,7 @@ export interface RouterCorsConfig {
  * @public
  * @class
  */
-export default class Router {
+export class Router {
 
     /**
      * Router Array
