@@ -180,21 +180,7 @@ Key         | Type                | Description
 
 ## Setup
 
----
-### ❗️ Compatibility ❗️
-
-CLI Tool | Router
--------- | ------
-[wrangler2](https://github.com/cloudflare/wrangler2#readme) | Use `v2.x.x` or later.
-[@cloudflare/wrangler](https://github.com/cloudflare/wrangler#readme) | Use `v1.x.x`, [here](https://github.com/tsndr/cloudflare-worker-router/tree/legacy#readme).
-
-See [Migration from v1.x.x to v2.x.x](https://github.com/tsndr/cloudflare-worker-router/blob/main/MIGRATION.md#migration-guide) if you want to update.
-
----
-
-### **[Wrangler2](https://github.com/cloudflare/wrangler2#readme)**
-
-Please follow Cloudflare's [Get started guide](https://developers.cloudflare.com/workers/get-started/guide/), then install the router using this command
+Please follow Cloudflare's [Get started guide](https://developers.cloudflare.com/workers/get-started/guide/) to install wrangler, then install the router using this command:
 
 ```bash
 npm i -D @tsndr/cloudflare-worker-router
