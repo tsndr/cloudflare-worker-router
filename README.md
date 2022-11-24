@@ -282,7 +282,7 @@ Key         | Type                | Description
 
 ## Setup
 
-Please follow Cloudflare's [Get started guide](https://developers.cloudflare.com/workers/get-started/guide/) to install wrangler, then install the router using this command:
+Please follow Cloudflare's [Get started guide](https://developers.cloudflare.com/workers/get-started/guide/) to install wrangler.
 
 
 #### Initialize Project
