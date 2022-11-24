@@ -6,10 +6,10 @@
  * @property {string} url URL String
  * @property {RouterHandler[]} handlers Array of handler functions
  */
- export interface Route<T> {
+ export interface Route<TEnv> {
     method: string
     url: string
-    handlers: RouterHandler<T>[]
+    handlers: RouterHandler<TEnv>[]
 }
 
 /**
@@ -21,8 +21,8 @@
  * @property {RouterResponse} res Response Object
  * @property {RouterNext} next Next Handler
  */
-export interface RouterContext<T> {
-    env: T
+export interface RouterContext<TEnv> {
+    env: TEnv
     req: RouterRequest
     res: RouterResponse
     next: RouterNext
@@ -103,8 +103,8 @@ export interface RouterNext {
  * @param {RouterContext} ctx
  * @returns {Promise<void> | void}
  */
-export interface RouterHandler<T> {
-    (ctx: RouterContext<T>): Promise<void> | void
+export interface RouterHandler<TEnv> {
+    (ctx: RouterContext<TEnv>): Promise<void> | void
 }
 
 /**
@@ -131,7 +131,7 @@ export interface RouterCorsConfig {
  * @public
  * @class
  */
-export class Router<T = any> {
+export class Router<TEnv = any> {
 
     /**
      * Router Array
@@ -139,7 +139,7 @@ export class Router<T = any> {
      * @protected
      * @type {Route[]}
      */
-    protected routes: Route<T>[] = []
+    protected routes: Route<TEnv>[] = []
 
     /**
      * Global Handlers
@@ -147,7 +147,7 @@ export class Router<T = any> {
      * @protected
      * @type {RouterHandler[]}
      */
-    protected globalHandlers: RouterHandler<T>[] = []
+    protected globalHandlers: RouterHandler<TEnv>[] = []
 
     /**
      * Debug Mode
@@ -179,7 +179,7 @@ export class Router<T = any> {
      * @param {RouterHandler[]} handlers
      * @returns {Router}
      */
-    public use(...handlers: RouterHandler<T>[]): Router<T> {
+    public use(...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         for (let handler of handlers) {
             this.globalHandlers.push(handler)
         }
@@ -193,7 +193,7 @@ export class Router<T = any> {
      * @param  {RouterHandler[]} handlers 
      * @returns {Router}
      */
-    public connect(url: string, ...handlers: RouterHandler<T>[]): Router<T> {
+    public connect(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         return this.register('CONNECT', url, handlers)
     }
 
@@ -204,7 +204,7 @@ export class Router<T = any> {
      * @param  {RouterHandler[]} handlers 
      * @returns {Router}
      */
-    public delete(url: string, ...handlers: RouterHandler<T>[]): Router<T> {
+    public delete(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         return this.register('DELETE', url, handlers)
     }
 
@@ -215,7 +215,7 @@ export class Router<T = any> {
      * @param  {RouterHandler[]} handlers 
      * @returns {Router}
      */
-    public get(url: string, ...handlers: RouterHandler<T>[]): Router<T> {
+    public get(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         return this.register('GET', url, handlers)
     }
 
@@ -226,7 +226,7 @@ export class Router<T = any> {
      * @param  {RouterHandler[]} handlers 
      * @returns {Router}
      */
-    public head(url: string, ...handlers: RouterHandler<T>[]): Router<T> {
+    public head(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         return this.register('HEAD', url, handlers)
     }
 
@@ -237,7 +237,7 @@ export class Router<T = any> {
      * @param  {RouterHandler[]} handlers 
      * @returns {Router}
      */
-    public options(url: string, ...handlers: RouterHandler<T>[]): Router<T> {
+    public options(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         return this.register('OPTIONS', url, handlers)
     }
 
@@ -248,7 +248,7 @@ export class Router<T = any> {
      * @param  {RouterHandler[]} handlers 
      * @returns {Router}
      */
-    public patch(url: string, ...handlers: RouterHandler<T>[]): Router<T> {
+    public patch(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         return this.register('PATCH', url, handlers)
     }
 
@@ -259,7 +259,7 @@ export class Router<T = any> {
      * @param  {RouterHandler[]} handlers 
      * @returns {Router}
      */
-    public post(url: string, ...handlers: RouterHandler<T>[]): Router<T> {
+    public post(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         return this.register('POST', url, handlers)
     }
 
@@ -270,7 +270,7 @@ export class Router<T = any> {
      * @param  {RouterHandler[]} handlers 
      * @returns {Router}
      */
-    public put(url: string, ...handlers: RouterHandler<T>[]): Router<T> {
+    public put(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         return this.register('PUT', url, handlers)
     }
 
@@ -281,7 +281,7 @@ export class Router<T = any> {
      * @param  {RouterHandler[]} handlers 
      * @returns {Router}
      */
-    public trace(url: string, ...handlers: RouterHandler<T>[]): Router<T> {
+    public trace(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         return this.register('TRACE', url, handlers)
     }
 
@@ -292,7 +292,7 @@ export class Router<T = any> {
      * @param  {RouterHandler[]} handlers 
      * @returns {Router}
      */
-    public any(url: string, ...handlers: RouterHandler<T>[]): Router<T> {
+    public any(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         return this.register('*', url, handlers)
     }
 
@@ -302,7 +302,7 @@ export class Router<T = any> {
      * @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
      * @returns {Router}
      */
-    public debug(state: boolean = true): Router<T> {
+    public debug(state: boolean = true): Router<TEnv> {
         this.debugMode = state
         return this
     }
@@ -313,7 +313,7 @@ export class Router<T = any> {
      * @param {RouterCorsConfig} [config]
      * @returns {Router}
      */
-    public cors(config?: RouterCorsConfig): Router<T> {
+    public cors(config?: RouterCorsConfig): Router<TEnv> {
         this.corsEnabled = true
         this.corsConfig = {
             allowOrigin: config?.allowOrigin || '*',
@@ -334,7 +334,7 @@ export class Router<T = any> {
      * @param {RouterHandler[]} handlers Arrar of handler functions
      * @returns {Router}
      */
-    private register(method: string, url: string, handlers: RouterHandler<T>[]): Router<T> {
+    private register(method: string, url: string, handlers: RouterHandler<TEnv>[]): Router<TEnv> {
         this.routes.push({
             method,
             url,
@@ -351,7 +351,7 @@ export class Router<T = any> {
      * @param {RouterRequest} request
      * @returns {Route | undefined}
      */
-    private getRoute(request: RouterRequest): Route<T> | undefined {
+    private getRoute(request: RouterRequest): Route<TEnv> | undefined {
         const url = new URL(request.url)
         const pathArr = url.pathname.split('/').filter(i => i)
 
@@ -388,12 +388,12 @@ export class Router<T = any> {
     /**
      * Handle requests
      * 
-     * @param {T} env
+     * @param {TEnv} env
      * @param {Request} request
      * @param {any} [extend]
      * @returns {Promise<Response>}
      */
-    public async handle(env: T, request: Request, extend: any = {}): Promise<Response> {
+    public async handle(env: TEnv, request: Request, extend: any = {}): Promise<Response> {
         try {
             const req: RouterRequest = {
                 ...extend,
