@@ -103,7 +103,7 @@ export interface RouterNext {
  * @param {RouterContext} ctx
  * @returns {Promise<void> | void}
  */
-export interface RouterHandler<TEnv> {
+export interface RouterHandler<TEnv = any> {
     (ctx: RouterContext<TEnv>): Promise<void> | void
 }
 
