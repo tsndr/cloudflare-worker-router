@@ -13,17 +13,19 @@ export interface Route<TEnv> {
 }
 
 /**
- * Router Context
- *
- * @typedef RouterContext
- * @property {RouterEnv} env Environment
- * @property {RouterRequest} req Request Object
- * @property {ExecutionContext} ctx Context Object
- */
-export interface RouterContext<TEnv = any> {
-    env: TEnv
-    req: RouterRequest
-    ctx: ExecutionContext
+* Router Context
+*
+* @typedef RouterContext
+* @property {RouterEnv} env Environment
+* @property {RouterRequest} req Request Object
+* @property {RouterResponse} res Response Object
+* @property {RouterNext} next Next Handler
+*/
+export interface RouterContext<TEnv> {
+	env: TEnv
+	req: RouterRequest
+	res: RouterResponse
+	next: RouterNext
 }
 
 /**
@@ -68,14 +70,41 @@ export interface RouterRequestQuery {
 }
 
 /**
- * Handler Function
- *
- * @callback RouterHandler
- * @param {RouterContext} ctx
- * @returns {Promise<Response | void> Response | void}
- */
+* Response Object
+*
+* @typedef RouterResponse
+* @property {Headers} headers Response headers object
+* @property {number} [status=204] Return status code (default: `204`)
+* @property {string | any} [body] Either an `object` (will be converted to JSON) or a string
+* @property {Response} [raw] A response object that is to be returned, this will void all other res properties and return this as is.
+*/
+export interface RouterResponse {
+	headers: Headers
+	status?: number
+	body?: string | any
+	raw?: Response,
+	webSocket?: WebSocket
+}
+
+/**
+* Next Function
+*
+* @callback RouterNext
+* @returns {Promise<void>}
+*/
+export interface RouterNext {
+	(): Promise<void>
+}
+
+/**
+* Handler Function
+*
+* @callback RouterHandler
+* @param {RouterContext} ctx
+* @returns {Promise<void> | void}
+*/
 export interface RouterHandler<TEnv = any> {
-    (ctx: RouterContext<TEnv>): Promise<Response | void> | Response | void
+	(ctx: RouterContext<TEnv>): Promise<void> | void
 }
 
 /**
@@ -296,33 +325,21 @@ export class Router<TEnv = any> {
 		return this
 	}
 
-    private setCorsHeaders(headers: Headers = new Headers()): Headers {
-        if (this.corsConfig.allowOrigin && !headers.has('Access-Control-Allow-Origin'))
-            headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
-        if (this.corsConfig.allowMethods && !headers.has('Access-Control-Allow-Methods'))
-            headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
-        if (this.corsConfig.allowHeaders && !headers.has('Access-Control-Allow-Headers'))
-            headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
-        if (this.corsConfig.maxAge && !headers.has('Access-Control-Max-Age'))
-            headers.set('Access-Control-Max-Age', this.corsConfig.maxAge.toString())
-        return headers
-    }
-
-    /**
-     * Register route
-     *
-     * @private
-     * @param {string} method HTTP request method
-     * @param {string} url URL String
-     * @param {RouterHandler[]} handlers Arrar of handler functions
-     * @returns {Router}
-     */
-    private register(method: string, url: string, handlers: RouterHandler<TEnv>[]): Router<TEnv> {
-        this.routes.push({
-            method,
-            url,
-            handlers
-        })
+	/**
+	* Register route
+	*
+	* @private
+	* @param {string} method HTTP request method
+	* @param {string} url URL String
+	* @param {RouterHandler[]} handlers Arrar of handler functions
+	* @returns {Router}
+	*/
+	private register(method: string, url: string, handlers: RouterHandler<TEnv>[]): Router<TEnv> {
+		this.routes.push({
+			method,
+			url,
+			handlers
+		})
 
 		return this
 	}
@@ -368,57 +385,98 @@ export class Router<TEnv = any> {
 		}) || this.routes.find(r => r.url === '*' && [request.method, '*'].includes(r.method))
 	}
 
-    /**
-     * Handle requests
-     *
-     * @param {TEnv} env
-     * @param {Request} request
-     * @param {any} [extend]
-     * @returns {Promise<Response>}
-     */
-    public async handle(request: Request, env: TEnv, ctx: ExecutionContext, extend: any = {}): Promise<Response> {
-        const req: RouterRequest = {
-            ...extend,
-            method: request.method,
-            headers: request.headers,
-            url: request.url,
-            cf: request.cf,
-            params: {},
-            query: {},
-            body: ''
-        }
+	/**
+	* Handle requests
+	*
+	* @param {TEnv} env
+	* @param {Request} request
+	* @param {any} [extend]
+	* @returns {Promise<Response>}
+	*/
+	public async handle(env: TEnv, request: Request, extend: any = {}): Promise<Response> {
+		try {
+			const req: RouterRequest = {
+				...extend,
+				method: request.method,
+				headers: request.headers,
+				url: request.url,
+				cf: request.cf,
+				params: {},
+				query: {},
+				body: ''
+			}
 
-        const route = this.getRoute(req)
+			const headers = new Headers()
+			const route = this.getRoute(req)
 
-        if (!route)
-            return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
+			if (this.corsEnabled) {
+				if (this.corsConfig.allowOrigin)
+					headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
+				if (this.corsConfig.allowMethods)
+					headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
+				if (this.corsConfig.allowHeaders)
+					headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
+				if (this.corsConfig.maxAge)
+					headers.set('Access-Control-Max-Age', this.corsConfig.maxAge.toString())
 
-        if (this.corsEnabled && req.method === 'OPTIONS') {
-            return new Response(null, {
-                headers: this.setCorsHeaders(),
-                status: this.corsConfig.optionsSuccessStatus
-            })
-        }
+				if (!route && req.method === 'OPTIONS') {
+					return new Response(null, {
+						headers,
+						status: this.corsConfig.optionsSuccessStatus
+					})
+				}
+			}
 
-        const handlers = [...this.globalHandlers, ...route.handlers]
+			if (!route)
+				return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
 
-        let response: Response | undefined
+			if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
+				if (req.headers.has('Content-Type') && req.headers.get('Content-Type')!.includes('json')) {
+					try {
+						req.body = await request.json()
+					} catch {
+						req.body = {}
+					}
+				} else {
+					try {
+						req.body = await request.text()
+					} catch {
+						req.body = ''
+					}
+				}
+			}
 
-        for (const handler of handlers) {
-            const res = await handler({ env, req, ctx })
+			const res: RouterResponse = { headers }
+			const handlers = [...this.globalHandlers, ...route.handlers]
+			let prevIndex = -1
 
-            if (res) {
-                response = res
-                break
-            }
-        }
+			const runner = async (index: number) => {
+				if (index === prevIndex)
+					throw new Error('next() called multiple times')
 
-        if (!response)
-            return new Response(this.debugMode ? 'Handler did not return a Response!' : null, { status: 404 })
+				prevIndex = index
 
-        if (this.corsEnabled)
-            this.setCorsHeaders(response.headers)
+				if (typeof handlers[index] === 'function')
+					await handlers[index]({ env, req, res, next: async () => await runner(index + 1) })
+			}
 
-        return response
-    }
+			await runner(0)
+
+			if (typeof res.body === 'object') {
+				if (!res.headers.has('Content-Type'))
+					res.headers.set('Content-Type', 'application/json')
+
+				res.body = JSON.stringify(res.body)
+			}
+
+			if (res.raw)
+				return res.raw
+
+			return new Response([101, 204, 205, 304].includes(res.status || (res.body ? 200 : 204)) ? null : res.body, { status: res.status, headers: res.headers, webSocket: res.webSocket || null })
+		} catch(err) {
+			console.error(err)
+			return new Response(this.debugMode && err instanceof Error ? err.stack : '', { status: 500 })
+		}
+	}
+>>>>>>> ad4557e (add editorconfig)
 }
