@@ -1,6 +1,6 @@
 /**
  * Route Object
- * 
+ *
  * @typedef Route
  * @property {string} method HTTP request method
  * @property {string} url URL String
@@ -14,7 +14,7 @@
 
 /**
  * Router Context
- * 
+ *
  * @typedef RouterContext
  * @property {RouterEnv} env Environment
  * @property {RouterRequest} req Request Object
@@ -30,7 +30,7 @@ export interface RouterContext<TEnv> {
 
 /**
  * Request Object
- * 
+ *
  * @typedef RouterRequest
  * @property {string} url URL
  * @property {string} method HTTP request method
@@ -53,7 +53,7 @@ export interface RouterRequest {
 
 /**
  * Request Parameters
- * 
+ *
  * @typedef RouterRequestParams
  */
 export interface RouterRequestParams {
@@ -62,7 +62,7 @@ export interface RouterRequestParams {
 
 /**
  * Request Query
- * 
+ *
  * @typedef RouterRequestQuery
  */
 export interface RouterRequestQuery {
@@ -71,7 +71,7 @@ export interface RouterRequestQuery {
 
 /**
  * Response Object
- * 
+ *
  * @typedef RouterResponse
  * @property {Headers} headers Response headers object
  * @property {number} [status=204] Return status code (default: `204`)
@@ -88,7 +88,7 @@ export interface RouterResponse {
 
 /**
  * Next Function
- * 
+ *
  * @callback RouterNext
  * @returns {Promise<void>}
  */
@@ -98,7 +98,7 @@ export interface RouterNext {
 
 /**
  * Handler Function
- * 
+ *
  * @callback RouterHandler
  * @param {RouterContext} ctx
  * @returns {Promise<void> | void}
@@ -109,7 +109,7 @@ export interface RouterHandler<TEnv = any> {
 
 /**
  * CORS Config
- * 
+ *
  * @typedef RouterCorsConfig
  * @property {string} [allowOrigin="*"] Access-Control-Allow-Origin (default: `*`)
  * @property {string} [allowMethods="*"] Access-Control-Allow-Methods (default: `*`)
@@ -127,7 +127,7 @@ export interface RouterCorsConfig {
 
 /**
  * Router
- * 
+ *
  * @public
  * @class
  */
@@ -135,7 +135,7 @@ export class Router<TEnv = any> {
 
     /**
      * Router Array
-     * 
+     *
      * @protected
      * @type {Route[]}
      */
@@ -143,7 +143,7 @@ export class Router<TEnv = any> {
 
     /**
      * Global Handlers
-     * 
+     *
      * @protected
      * @type {RouterHandler[]}
      */
@@ -151,7 +151,7 @@ export class Router<TEnv = any> {
 
     /**
      * Debug Mode
-     * 
+     *
      * @protected
      * @type {boolean}
      */
@@ -159,7 +159,7 @@ export class Router<TEnv = any> {
 
     /**
      * CORS Config
-     * 
+     *
      * @protected
      * @type {RouterCorsConfig}
      */
@@ -175,7 +175,7 @@ export class Router<TEnv = any> {
 
     /**
      * Register global handlers
-     * 
+     *
      * @param {RouterHandler[]} handlers
      * @returns {Router}
      */
@@ -188,9 +188,9 @@ export class Router<TEnv = any> {
 
     /**
      * Register CONNECT route
-     * 
-     * @param {string} url 
-     * @param  {RouterHandler[]} handlers 
+     *
+     * @param {string} url
+     * @param  {RouterHandler[]} handlers
      * @returns {Router}
      */
     public connect(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
@@ -199,9 +199,9 @@ export class Router<TEnv = any> {
 
     /**
      * Register DELETE route
-     * 
-     * @param {string} url 
-     * @param  {RouterHandler[]} handlers 
+     *
+     * @param {string} url
+     * @param  {RouterHandler[]} handlers
      * @returns {Router}
      */
     public delete(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
@@ -210,9 +210,9 @@ export class Router<TEnv = any> {
 
     /**
      * Register GET route
-     * 
-     * @param {string} url 
-     * @param  {RouterHandler[]} handlers 
+     *
+     * @param {string} url
+     * @param  {RouterHandler[]} handlers
      * @returns {Router}
      */
     public get(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
@@ -221,9 +221,9 @@ export class Router<TEnv = any> {
 
     /**
      * Register HEAD route
-     * 
-     * @param {string} url 
-     * @param  {RouterHandler[]} handlers 
+     *
+     * @param {string} url
+     * @param  {RouterHandler[]} handlers
      * @returns {Router}
      */
     public head(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
@@ -232,9 +232,9 @@ export class Router<TEnv = any> {
 
     /**
      * Register OPTIONS route
-     * 
-     * @param {string} url 
-     * @param  {RouterHandler[]} handlers 
+     *
+     * @param {string} url
+     * @param  {RouterHandler[]} handlers
      * @returns {Router}
      */
     public options(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
@@ -243,9 +243,9 @@ export class Router<TEnv = any> {
 
     /**
      * Register PATCH route
-     * 
-     * @param {string} url 
-     * @param  {RouterHandler[]} handlers 
+     *
+     * @param {string} url
+     * @param  {RouterHandler[]} handlers
      * @returns {Router}
      */
     public patch(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
@@ -254,9 +254,9 @@ export class Router<TEnv = any> {
 
     /**
      * Register POST route
-     * 
-     * @param {string} url 
-     * @param  {RouterHandler[]} handlers 
+     *
+     * @param {string} url
+     * @param  {RouterHandler[]} handlers
      * @returns {Router}
      */
     public post(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
@@ -265,9 +265,9 @@ export class Router<TEnv = any> {
 
     /**
      * Register PUT route
-     * 
-     * @param {string} url 
-     * @param  {RouterHandler[]} handlers 
+     *
+     * @param {string} url
+     * @param  {RouterHandler[]} handlers
      * @returns {Router}
      */
     public put(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
@@ -276,9 +276,9 @@ export class Router<TEnv = any> {
 
     /**
      * Register TRACE route
-     * 
-     * @param {string} url 
-     * @param  {RouterHandler[]} handlers 
+     *
+     * @param {string} url
+     * @param  {RouterHandler[]} handlers
      * @returns {Router}
      */
     public trace(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
@@ -287,9 +287,9 @@ export class Router<TEnv = any> {
 
     /**
      * Register route, ignoring method
-     * 
-     * @param {string} url 
-     * @param  {RouterHandler[]} handlers 
+     *
+     * @param {string} url
+     * @param  {RouterHandler[]} handlers
      * @returns {Router}
      */
     public any(url: string, ...handlers: RouterHandler<TEnv>[]): Router<TEnv> {
@@ -298,7 +298,7 @@ export class Router<TEnv = any> {
 
     /**
      * Debug Mode
-     * 
+     *
      * @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
      * @returns {Router}
      */
@@ -309,7 +309,7 @@ export class Router<TEnv = any> {
 
     /**
      * Enable CORS support
-     * 
+     *
      * @param {RouterCorsConfig} [config]
      * @returns {Router}
      */
@@ -327,7 +327,7 @@ export class Router<TEnv = any> {
 
     /**
      * Register route
-     * 
+     *
      * @private
      * @param {string} method HTTP request method
      * @param {string} url URL String
@@ -346,7 +346,7 @@ export class Router<TEnv = any> {
 
     /**
      * Get Route by request
-     * 
+     *
      * @private
      * @param {RouterRequest} request
      * @returns {Route | undefined}
@@ -387,7 +387,7 @@ export class Router<TEnv = any> {
 
     /**
      * Handle requests
-     * 
+     *
      * @param {TEnv} env
      * @param {Request} request
      * @param {any} [extend]
