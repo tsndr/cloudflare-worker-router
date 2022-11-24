@@ -188,8 +188,7 @@ npm i -D @tsndr/cloudflare-worker-router
 
 and replace your `index.ts` / `index.js` with one of the following scripts
 
-<details>
-<summary>TypeScript (<code>src/index.ts</code>)</summary>
+### TypeScript (<code>src/index.ts</code>)
 
 ```typescript
 import { Router } from '@tsndr/cloudflare-worker-router'
@@ -215,10 +214,8 @@ export default {
     }
 }
 ```
-</details>
 
-<details>
-<summary>JavaScript (<code>src/index.js</code>)</summary>
+### JavaScript (<code>src/index.js</code>)
 
 ```javascript
 import { Router } from '@tsndr/cloudflare-worker-router'
@@ -233,4 +230,3 @@ export default {
     }
 }
 ```
-</details>
