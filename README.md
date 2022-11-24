@@ -339,6 +339,7 @@ export default {
 }
 ```
 
+
 ### JavaScript (<code>src/index.js</code>)
 
 <details>
@@ -361,4 +362,3 @@ export default {
     }
 }
 ```
-</details>
