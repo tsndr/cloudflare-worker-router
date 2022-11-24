@@ -225,16 +225,18 @@ Key                    | Type      | Default Value
 `optionsSuccessStatus` | `integer` | `204`
 
 
-### `router.any(url, [...handlers])`
-### `router.connect(url, [...handlers])`
-### `router.delete(url, [...handlers])`
-### `router.get(url, [...handlers])`
-### `router.head(url, [...handlers])`
-### `router.options(url, [...handlers])`
-### `router.patch(url, [...handlers])`
-### `router.post(url, [...handlers])`
-### `router.put(url, [...handlers])`
-### `router.trace(url, [...handlers])`
+### Supported Methods
+
+- `router.any(url, [...handlers])`
+- `router.connect(url, [...handlers])`
+- `router.delete(url, [...handlers])`
+- `router.get(url, [...handlers])`
+- `router.head(url, [...handlers])`
+- `router.options(url, [...handlers])`
+- `router.patch(url, [...handlers])`
+- `router.post(url, [...handlers])`
+- `router.put(url, [...handlers])`
+- `router.trace(url, [...handlers])`
 
 
 #### `url` (string)
