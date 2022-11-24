@@ -1,6 +1,6 @@
 # Cloudflare Workers Router
 
-Cloudflare Workers Router is a super lightweight router (2.30 KiB) with middleware support and **ZERO dependencies** for [Cloudflare Workers](https://workers.cloudflare.com/).
+Cloudflare Workers Router is a super lightweight router (1.3K gzipped) with middleware support and **ZERO dependencies** for [Cloudflare Workers](https://workers.cloudflare.com/).
 
 When I was trying out Cloudflare Workers I almost immediately noticed how fast it was compared to other serverless offerings. So I wanted to build a full-fledged API to see how it performs doing real work, but since I wasn't able to find a router that suited my needs I created my own.
 
@@ -9,14 +9,106 @@ I worked a lot with [Express.js](https://expressjs.com/) in the past and really 
 
 ## Contents
 
+- [Features](#features)
 - [Usage](#usage)
 - [Reference](#reference)
 - [Setup](#setup)
 
 
+## Features
+
+- ZERO dependencies
+- Lightweight (1.3K gzipped)
+- Fully written in TypeScript
+- Integrated Debug-Mode & CORS helper
+- Built specifically around Middlewares
+
+
 ## Usage
 
-### Simple Example
+### TypeScript Example
+
+```typescript
+import { Router } from '@tsndr/cloudflare-worker-router'
+
+export interface Env {
+  // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
+  // MY_KV_NAMESPACE: KVNamespace;
+  //
+  // Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
+  // MY_DURABLE_OBJECT: DurableObjectNamespace;
+  //
+  // Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
+  // MY_BUCKET: R2Bucket;
+}
+
+
+// Initialize router
+const router = new Router<Env>()
+
+// Enabling build in CORS support
+router.cors()
+
+// Register global middleware
+router.use(({ req, res, next }) => {
+  res.headers.set('X-Global-Middlewares', 'true')
+  next()
+})
+
+// Simple get
+router.get('/user', ({ req, res }) => {
+  res.body = {
+    data: {
+      id: 1,
+      name: 'John Doe'
+    }
+  }
+})
+
+// Post route with url parameter
+router.post('/user/:id', ({ req, res }) => {
+
+  const userId = req.params.id
+  
+  // Do stuff...
+  
+  if (errorDoingStuff) {
+    res.status = 400
+    res.body = {
+      error: 'User did stupid stuff!'
+    }
+    return
+  }
+  
+  res.status = 204
+})
+
+// Delete route using a middleware
+router.delete('/user/:id', ({ req, res, next }) => {
+
+  if (!apiTokenIsCorrect) {
+    res.status = 401
+    return
+  }
+  
+  await next()
+}, (req, res) => {
+
+  const userId = req.params.id
+  
+  // Do stuff...
+})
+
+// Listen Cloudflare Workers Fetch Event
+export default {
+  async fetch(request, env) {
+    return router.handle(env, request)
+  }
+}
+```
+
+<details>
+    <summary>JavaScript Example</summary>
 
 ```javascript
 import { Router } from '@tsndr/cloudflare-worker-router'
@@ -84,6 +176,7 @@ export default {
   }
 }
 ```
+</details>
 
 
 ## Reference
@@ -96,6 +189,10 @@ Enable or disable debug mode. Which will return the `error.stack` in case of an 
 #### `state`
 State is a `boolean` which determines if debug mode should be enabled or not (default: `true`)
 
+Key                    | Type      | Default Value
+---------------------- | --------- | -------------
+`state`                | `boolean` | `true`
+
 
 ### `router.use([...handlers])`
 
@@ -106,7 +203,9 @@ Register a global middleware handler.
 
 Handler is a `function` which will be called for every request.
 
+
 #### `ctx`
+
 Object containing `env`, [`req`](#req-object), [`res`](#res-object), `next`
 
 
@@ -136,6 +235,7 @@ Key                    | Type      | Default Value
 ### `router.post(url, [...handlers])`
 ### `router.put(url, [...handlers])`
 ### `router.trace(url, [...handlers])`
+
 
 #### `url` (string)
 
@@ -182,11 +282,19 @@ Key         | Type                | Description
 
 Please follow Cloudflare's [Get started guide](https://developers.cloudflare.com/workers/get-started/guide/) to install wrangler, then install the router using this command:
 
+
+#### Initialize Project
+
+```bash
+wrangler init <name>
+```
+
+Use of TypeScript is strongly encouraged :)
+
 ```bash
 npm i -D @tsndr/cloudflare-worker-router
 ```
 
-and replace your `index.ts` / `index.js` with one of the following scripts
 
 ### TypeScript (<code>src/index.ts</code>)
 
@@ -204,7 +312,23 @@ export interface Env {
   // MY_BUCKET: R2Bucket;
 }
 
-const router = new Router()
+const router = new Router<Env>()
+
+/// Example Route
+//
+// router.get(/'hi', ({ res }) => {
+//    res.body = 'Hello World'
+//}
+
+
+/// Example Route for splitting into multiple files
+//
+// const hiHandler: RouteHandler<Env> = ({ res }) => {
+//     res.body = 'Hello World'
+// }
+//
+// router.get('/hi', hiHandler)
+
 
 // TODO: add your routes here
 
@@ -217,10 +341,17 @@ export default {
 
 ### JavaScript (<code>src/index.js</code>)
 
+<details>
+    <summary>Consider using TypeScript instead :)</summary>
+
 ```javascript
 import { Router } from '@tsndr/cloudflare-worker-router'
 
 const router = new Router()
+
+// router.get(/'hi', ({ res }) => {
+//    res.body = 'Hello World'
+//}
 
 // TODO: add your routes here
 
@@ -230,3 +361,4 @@ export default {
     }
 }
 ```
+</details>
