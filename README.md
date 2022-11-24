@@ -40,8 +40,9 @@ export interface Env {
     //
     // Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
     // MY_BUCKET: R2Bucket
-}
 
+    SECRET_TOKEN: string
+}
 
 // Initialize router
 const router = new Router<Env>()
@@ -50,61 +51,61 @@ const router = new Router<Env>()
 router.cors()
 
 // Register global middleware
-router.use(({ req, res, next }) => {
-    res.headers.set('X-Global-Middlewares', 'true')
-    next()
+router.use(() => {
+    return new Response(null, {
+        headers: {
+            'X-Global-Middlewares': 'true'
+        }
+    })
 })
 
 // Simple get
-router.get('/user', ({ req, res }) => {
-    res.body = {
-        data: {
-            id: 1,
-            name: 'John Doe'
-        }
-    }
+router.get('/user', () => {
+    return Response.json({
+        id: 1,
+        name: 'John Doe'
+    })
 })
 
 // Post route with url parameter
-router.post('/user/:id', ({ req, res }) => {
+router.post('/user/:id', ({ req }) => {
 
     const userId = req.params.id
 
-    // Do stuff...
+    // Do stuff
 
-    if (errorDoingStuff) {
-        res.status = 400
-        res.body = {
-            error: 'User did stupid stuff!'
-        }
-        return
+    if (!true) {
+        return Response.json({
+            error: 'Error doing stuff!'
+        }, { status: 400 })
     }
 
-    res.status = 204
+    return Response.json({ userId }, { status: 204 })
 })
 
 // Delete route using a middleware
-router.delete('/user/:id', ({ req, res, next }) => {
+router.delete('/user/:id', ({ env, req }) => {
+    const { SECRET_TOKEN } = env
 
-    if (!apiTokenIsCorrect) {
-        res.status = 401
-        return
-    }
+    if (req.headers.get('Authorization') === SECRET_TOKEN)
+        return new Response(null, { status: 401 })
 
-    await next()
-}, (req, res) => {
+}, ({ req }) => {
 
-    const userId = req.params.id
+  const userId = req.params.id
 
-    // Do stuff...
+  // Do stuff...
+
+  return Response.json({ userId })
 })
 
 // Listen Cloudflare Workers Fetch Event
 export default {
-    async fetch(request: Request, env: Env): Promise<Response> {
-        return router.handle(env, request)
+    async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+        return router.handle(request, env, ctx)
     }
 }
+
 ```
 
 <details>
@@ -120,59 +121,56 @@ const router = new Router()
 router.cors()
 
 // Register global middleware
-router.use(({ req, res, next }) => {
-    res.headers.set('X-Global-Middlewares', 'true')
-    next()
+router.use(() => {
+    return new Response(null, {
+        headers: {
+            'X-Global-Middlewares': 'true'
+        }
+    })
 })
 
 // Simple get
-router.get('/user', ({ req, res }) => {
-    res.body = {
-        data: {
-            id: 1,
-            name: 'John Doe'
-        }
-    }
+router.get('/user', () => {
+    return Response.json({
+        id: 1,
+        name: 'John Doe'
+    })
 })
 
 // Post route with url parameter
-router.post('/user/:id', ({ req, res }) => {
-
+router.post('/user/:id', ({ req }) => {
     const userId = req.params.id
 
-    // Do stuff...
+    // Do stuff
 
-        if (errorDoingStuff) {
-            res.status = 400
-            res.body = {
-                error: 'User did stupid stuff!'
-            }
-            return
-        }
+    if (errorDoingStuff) {
+        return Response.json({
+            error: 'Error doing stuff!'
+        }, { status: 400 })
+    }
 
-    res.status = 204
+    return Response.json({ userId }, { status: 204 })
 })
 
 // Delete route using a middleware
-router.delete('/user/:id', ({ req, res, next }) => {
+router.delete('/user/:id', ({ env, req }) => {
+    const { SECRET_TOKEN } = env
 
-    if (!apiTokenIsCorrect) {
-        res.status = 401
-        return
-    }
+    if (req.headers.get('Authorization') === SECRET_TOKEN)
+        return new Response(null, { status: 401 })
 
-    await next()
-}, (req, res) => {
-
+}, ({ req }) => {
     const userId = req.params.id
 
     // Do stuff...
+
+    return Response.json({ userId })
 })
 
 // Listen Cloudflare Workers Fetch Event
 export default {
-    async fetch(request, env) {
-        return router.handle(env, request)
+    async fetch(request, env, ctx) {
+        return router.handle(request, env, ctx)
     }
 }
 ```
@@ -206,7 +204,7 @@ Handler is a `function` which will be called for every request.
 
 #### `ctx`
 
-Object containing `env`, [`req`](#req-object), [`res`](#res-object), `next`
+Object containing `env`, [`req`](#req-object)
 
 
 ### `router.cors([config])`
@@ -247,16 +245,16 @@ Supports the use of dynamic parameters, prefixed with a `:` (i.e. `/user/:userId
 
 #### `handlers` (function, optional)
 
-An unlimited number of functions getting [`req`](#req-object) and [`res`](#res-object) passed into them.
+An unlimited number of functions getting [`ctx`](#ctx-object) passed into them.
 
 
 ### `ctx`-Object
+
 Key       | Type                | Description
 --------- | ------------------- | -----------
 `env`     | `object`            | Environment
 `req`     | `req`-Object        | Request Object
-`res`     | `res`-Object        | Response Object
-`next`    | `next`-Handler      | Next Handler
+`ctx`     | `ctx`-Object        | Cloudflare's `ctx`-Object
 
 
 ### `req`-Object
@@ -268,16 +266,6 @@ Key       | Type                | Description
 `method`  | `string`            | HTTP request method
 `params`  | `object`            | Object containing all parameters defined in the url string
 `query`   | `object`            | Object containing all query parameters
-
-
-### `res`-Object
-
-Key         | Type                | Description
------------ | ------------------- | -----------
-`body`      | `object` / `string` | Either set an `object` (will be converted to JSON) or a string
-`headers`   | `Headers`           | Response [Headers Object](https://developer.mozilla.org/en-US/docs/Web/API/Headers)
-`status`    | `integer`           | Return status code (default: `204`)
-`webSocket` | `WebSocket`         | Upgraded websocket connection
 
 
 ## Setup
@@ -335,8 +323,8 @@ const router = new Router<Env>()
 // TODO: add your routes here
 
 export default {
-    async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-        return router.handle(env, request)
+    async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+        return router.handle(request, env, ctx)
     }
 }
 ```
@@ -360,7 +348,7 @@ const router = new Router()
 
 export default {
     async fetch(request, env, ctx) {
-        return router.handle(env, request)
+        return router.handle(request, env, ctx)
     }
 }
 ```
