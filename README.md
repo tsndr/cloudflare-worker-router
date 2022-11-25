@@ -1,6 +1,6 @@
 # Cloudflare Workers Router
 
-Cloudflare Workers Router is a super lightweight router (1.3K gzipped) with middleware support and **ZERO dependencies** for [Cloudflare Workers](https://workers.cloudflare.com/).
+Cloudflare Workers Router is a super lightweight router (1.0K gzipped) with middleware support and **ZERO dependencies** for [Cloudflare Workers](https://workers.cloudflare.com/).
 
 When I was trying out Cloudflare Workers I almost immediately noticed how fast it was compared to other serverless offerings. So I wanted to build a full-fledged API to see how it performs doing real work, but since I wasn't able to find a router that suited my needs I created my own.
 
@@ -18,7 +18,7 @@ I worked a lot with [Express.js](https://expressjs.com/) in the past and really 
 ## Features
 
 - ZERO dependencies
-- Lightweight (1.3K gzipped)
+- Lightweight (1.0K gzipped)
 - Fully written in TypeScript
 - Integrated Debug-Mode & CORS helper
 - Built specifically around Middlewares
