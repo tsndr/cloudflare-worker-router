@@ -13,17 +13,17 @@ export interface Route<TEnv> {
 }
 
 /**
- * Router Context
- *
- * @typedef RouterContext
- * @property {RouterEnv} env Environment
- * @property {RouterRequest} req Request Object
- * @property {ExecutionContext} ctx Context Object
- */
+* Router Context
+*
+* @typedef RouterContext
+* @property {RouterEnv} env Environment
+* @property {RouterRequest} req Request Object
+* @property {ExecutionContext} ctx Context Object
+*/
 export interface RouterContext<TEnv = any> {
-    env: TEnv
-    req: RouterRequest
-    ctx: ExecutionContext
+	env: TEnv
+	req: RouterRequest
+	ctx: ExecutionContext
 }
 
 /**
@@ -68,14 +68,14 @@ export interface RouterRequestQuery {
 }
 
 /**
- * Handler Function
- *
- * @callback RouterHandler
- * @param {RouterContext} ctx
- * @returns {Promise<Response | void> Response | void}
- */
+* Handler Function
+*
+* @callback RouterHandler
+* @param {RouterContext} ctx
+* @returns {Promise<Response | void> Response | void}
+*/
 export interface RouterHandler<TEnv = any> {
-    (ctx: RouterContext<TEnv>): Promise<Response | void> | Response | void
+	(ctx: RouterContext<TEnv>): Promise<Response | void> | Response | void
 }
 
 /**
@@ -296,33 +296,33 @@ export class Router<TEnv = any> {
 		return this
 	}
 
-    private setCorsHeaders(headers: Headers = new Headers()): Headers {
-        if (this.corsConfig.allowOrigin && !headers.has('Access-Control-Allow-Origin'))
-            headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
-        if (this.corsConfig.allowMethods && !headers.has('Access-Control-Allow-Methods'))
-            headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
-        if (this.corsConfig.allowHeaders && !headers.has('Access-Control-Allow-Headers'))
-            headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
-        if (this.corsConfig.maxAge && !headers.has('Access-Control-Max-Age'))
-            headers.set('Access-Control-Max-Age', this.corsConfig.maxAge.toString())
-        return headers
-    }
+	private setCorsHeaders(headers: Headers = new Headers()): Headers {
+		if (this.corsConfig.allowOrigin && !headers.has('Access-Control-Allow-Origin'))
+			headers.set('Access-Control-Allow-Origin', this.corsConfig.allowOrigin)
+		if (this.corsConfig.allowMethods && !headers.has('Access-Control-Allow-Methods'))
+			headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
+		if (this.corsConfig.allowHeaders && !headers.has('Access-Control-Allow-Headers'))
+			headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
+		if (this.corsConfig.maxAge && !headers.has('Access-Control-Max-Age'))
+			headers.set('Access-Control-Max-Age', this.corsConfig.maxAge.toString())
+		return headers
+	}
 
-    /**
-     * Register route
-     *
-     * @private
-     * @param {string} method HTTP request method
-     * @param {string} url URL String
-     * @param {RouterHandler[]} handlers Arrar of handler functions
-     * @returns {Router}
-     */
-    private register(method: string, url: string, handlers: RouterHandler<TEnv>[]): Router<TEnv> {
-        this.routes.push({
-            method,
-            url,
-            handlers
-        })
+	/**
+	* Register route
+	*
+	* @private
+	* @param {string} method HTTP request method
+	* @param {string} url URL String
+	* @param {RouterHandler[]} handlers Arrar of handler functions
+	* @returns {Router}
+	*/
+	private register(method: string, url: string, handlers: RouterHandler<TEnv>[]): Router<TEnv> {
+		this.routes.push({
+			method,
+			url,
+			handlers
+		})
 
 		return this
 	}
@@ -369,56 +369,56 @@ export class Router<TEnv = any> {
 	}
 
    /**
-     * Handle requests
-     *
-     * @param {TEnv} env
-     * @param {Request} request
-     * @param {any} [extend]
-     * @returns {Promise<Response>}
-     */
-    public async handle(request: Request, env: TEnv, ctx: ExecutionContext, extend: any = {}): Promise<Response> {
-        const req: RouterRequest = {
-            ...extend,
-            method: request.method,
-            headers: request.headers,
-            url: request.url,
-            cf: request.cf,
-            params: {},
-            query: {},
-            body: ''
-        }
+	* Handle requests
+	*
+	* @param {TEnv} env
+	* @param {Request} request
+	* @param {any} [extend]
+	* @returns {Promise<Response>}
+	*/
+	public async handle(request: Request, env: TEnv, ctx: ExecutionContext, extend: any = {}): Promise<Response> {
+		const req: RouterRequest = {
+			...extend,
+			method: request.method,
+			headers: request.headers,
+			url: request.url,
+			cf: request.cf,
+			params: {},
+			query: {},
+			body: ''
+		}
 
-        const route = this.getRoute(req)
+		const route = this.getRoute(req)
 
-        if (!route)
-            return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
+		if (!route)
+			return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
 
-        if (this.corsEnabled && req.method === 'OPTIONS') {
-            return new Response(null, {
-                headers: this.setCorsHeaders(),
-                status: this.corsConfig.optionsSuccessStatus
-            })
-        }
+		if (this.corsEnabled && req.method === 'OPTIONS') {
+			return new Response(null, {
+				headers: this.setCorsHeaders(),
+				status: this.corsConfig.optionsSuccessStatus
+			})
+		}
 
-        const handlers = [...this.globalHandlers, ...route.handlers]
+		const handlers = [...this.globalHandlers, ...route.handlers]
 
-        let response: Response | undefined
+		let response: Response | undefined
 
-        for (const handler of handlers) {
-            const res = await handler({ env, req, ctx })
+		for (const handler of handlers) {
+			const res = await handler({ env, req, ctx })
 
-            if (res) {
-                response = res
-                break
-            }
-        }
+			if (res) {
+				response = res
+				break
+			}
+		}
 
-        if (!response)
-            return new Response(this.debugMode ? 'Handler did not return a Response!' : null, { status: 404 })
+		if (!response)
+			return new Response(this.debugMode ? 'Handler did not return a Response!' : null, { status: 404 })
 
-        if (this.corsEnabled)
-            this.setCorsHeaders(response.headers)
+		if (this.corsEnabled)
+			this.setCorsHeaders(response.headers)
 
-        return response
-    }
+		return response
+	}
 }
