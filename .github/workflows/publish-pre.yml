@@ -1,4 +1,4 @@
-name: Publish (main)
+name: Publish (pre)
 
 on:
   release:
@@ -20,11 +20,11 @@ jobs:
       - name: Publish to npmjs
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: npm publish --tag latest --access public
+        run: npm publish --tag pre --access public
       - uses: actions/setup-node@v1
         with:
           registry-url: https://npm.pkg.github.com/
       - name: Publish to GPR
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        run: npm publish --tag latest --access public
+        run: npm publish --tag pre --access public
