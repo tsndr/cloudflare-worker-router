@@ -383,6 +383,7 @@ export class Router<TEnv = any> {
 			headers: request.headers,
 			url: request.url,
 			cf: request.cf,
+			raw: request,
 			params: {},
 			query: {},
 			body: ''
