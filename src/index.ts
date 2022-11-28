@@ -23,7 +23,7 @@ export interface Route<TEnv> {
 export interface RouterContext<TEnv = any> {
 	env: TEnv
 	req: RouterRequest
-	ctx: ExecutionContext
+	ctx?: ExecutionContext
 }
 
 /**
@@ -376,7 +376,7 @@ export class Router<TEnv = any> {
 	* @param {any} [extend]
 	* @returns {Promise<Response>}
 	*/
-	public async handle(request: Request, env: TEnv, ctx: ExecutionContext, extend: any = {}): Promise<Response> {
+	public async handle(request: Request, env: TEnv, ctx?: ExecutionContext, extend: any = {}): Promise<Response> {
 		const req: RouterRequest = {
 			...extend,
 			method: request.method,
