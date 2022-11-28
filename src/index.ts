@@ -45,6 +45,7 @@ export interface RouterRequest {
 	query: RouterRequestQuery
 	headers: Headers
 	body: string | any
+	raw: Request
 	cf?: IncomingRequestCfProperties
 	[key: string]: any
 }
