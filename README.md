@@ -318,9 +318,9 @@ const router = new Router<Env>()
 
 /// Example Route
 //
-// router.get(/'hi', ({ res }) => {
+// router.get('/hi', ({ res }) => {
 //    res.body = 'Hello World'
-//}
+// })
 
 
 /// Example Route for splitting into multiple files
