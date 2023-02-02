@@ -23,6 +23,7 @@ export type Route<TEnv, TExt> = {
 export type RouterContext<TEnv = any, TExt = any> = {
 	env: TEnv
 	req: RouterRequest<TExt>
+	dbg: boolean
 	ctx?: ExecutionContext
 }
 
@@ -402,11 +403,12 @@ export class Router<TEnv = any, TExt = any> {
 		}
 
 		const handlers = [...this.globalHandlers, ...route.handlers]
+		const dbg = this.debugMode
 
 		let response: Response | undefined
 
 		for (const handler of handlers) {
-			const res = await handler({ env, req, ctx })
+			const res = await handler({ env, req, dbg, ctx })
 
 			if (res) {
 				response = res
