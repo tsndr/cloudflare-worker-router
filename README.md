@@ -302,9 +302,9 @@ const router = new Router<Env>()
 
 /// Example Route
 //
-// router.get(/'hi', async () => {
+// router.get('/hi', async () => {
 //    return new Response('Hello World')
-//}
+//})
 
 
 /// Example Route for splitting into multiple files
@@ -338,9 +338,9 @@ const router = new Router()
 
 /// Example Route
 //
-// router.get(/'hi', async () => {
+// router.get('/hi', async () => {
 //    return new Response('Hello World')
-//}
+//})
 
 /// Example Route for splitting into multiple files
 //
