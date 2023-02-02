@@ -287,11 +287,11 @@ export class Router<TEnv = any, TExt = any> {
 	public cors(config?: RouterCorsConfig): Router<TEnv, TExt> {
 		this.corsEnabled = true
 		this.corsConfig = {
-			allowOrigin: config?.allowOrigin || '*',
-			allowMethods: config?.allowMethods || '*',
-			allowHeaders: config?.allowHeaders || '*',
-			maxAge: config?.maxAge || 86400,
-			optionsSuccessStatus: config?.optionsSuccessStatus || 204
+			allowOrigin: config?.allowOrigin ?? '*',
+			allowMethods: config?.allowMethods ?? '*',
+			allowHeaders: config?.allowHeaders ?? '*',
+			maxAge: config?.maxAge ?? 86400,
+			optionsSuccessStatus: config?.optionsSuccessStatus ?? 204
 		}
 		return this
 	}
