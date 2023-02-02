@@ -48,6 +48,7 @@ export type RouterRequest<TExt> = {
 	body: string | any
 	raw: Request
 	cf?: IncomingRequestCfProperties
+	bearer: () => string
 } & TExt
 
 /**
@@ -387,7 +388,8 @@ export class Router<TEnv = any, TExt = any> {
 			raw: request,
 			params: {},
 			query: {},
-			body: ''
+			body: '',
+			bearer: () => request.headers.get('Authorization')?.replace('Bearer ', '').trim() ?? '',
 		} as RouterRequest<TExt>
 
 		const route = this.getRoute(req)
