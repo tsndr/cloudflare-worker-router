@@ -26,6 +26,8 @@ I worked a lot with [Express.js](https://expressjs.com/) in the past and really 
 
 ## Usage
 
+Migrating from `v1.x.x`, check out the [Migration Guide](MIGRATION.md).
+
 ### TypeScript Example
 
 ```typescript
@@ -51,12 +53,10 @@ const router = new Router<Env>()
 router.cors()
 
 // Register global middleware
-router.use(() => {
-    return new Response(null, {
-        headers: {
-            'X-Global-Middlewares': 'true'
-        }
-    })
+router.use(({ env, req }) => {
+    // Intercept if token doesn't match
+    if (req.headers.get('authorization') !== env.SECRET_TOKEN)
+        return new Response(null, { status: 401 })
 })
 
 // Simple get
@@ -85,9 +85,7 @@ router.post('/user/:id', ({ req }) => {
 
 // Delete route using a middleware
 router.delete('/user/:id', ({ env, req }) => {
-    const { SECRET_TOKEN } = env
-
-    if (req.headers.get('Authorization') === SECRET_TOKEN)
+    if (req.headers.get('authorization') === env.SECRET_TOKEN)
         return new Response(null, { status: 401 })
 
 }, ({ req }) => {
@@ -121,12 +119,10 @@ const router = new Router()
 router.cors()
 
 // Register global middleware
-router.use(() => {
-    return new Response(null, {
-        headers: {
-            'X-Global-Middlewares': 'true'
-        }
-    })
+router.use(({ env, req }) => {
+    // Intercept if token doesn't match
+    if (req.headers.get('authorization') !== env.SECRET_TOKEN)
+        return new Response(null, { status: 401 })
 })
 
 // Simple get
@@ -139,11 +135,12 @@ router.get('/user', () => {
 
 // Post route with url parameter
 router.post('/user/:id', ({ req }) => {
+
     const userId = req.params.id
 
     // Do stuff
 
-    if (errorDoingStuff) {
+    if (!true) {
         return Response.json({
             error: 'Error doing stuff!'
         }, { status: 400 })
@@ -154,17 +151,16 @@ router.post('/user/:id', ({ req }) => {
 
 // Delete route using a middleware
 router.delete('/user/:id', ({ env, req }) => {
-    const { SECRET_TOKEN } = env
-
-    if (req.headers.get('Authorization') === SECRET_TOKEN)
+    if (req.headers.get('authorization') === env.SECRET_TOKEN)
         return new Response(null, { status: 401 })
 
 }, ({ req }) => {
-    const userId = req.params.id
 
-    // Do stuff...
+  const userId = req.params.id
 
-    return Response.json({ userId })
+  // Do stuff...
+
+  return Response.json({ userId })
 })
 
 // Listen Cloudflare Workers Fetch Event
@@ -306,15 +302,15 @@ const router = new Router<Env>()
 
 /// Example Route
 //
-// router.get(/'hi', ({ res }) => {
-//    res.body = 'Hello World'
+// router.get(/'hi', async () => {
+//    return new Response('Hello World')
 //}
 
 
 /// Example Route for splitting into multiple files
 //
-// const hiHandler: RouteHandler<Env> = ({ res }) => {
-//     res.body = 'Hello World'
+// const hiHandler: RouteHandler<Env> = async () => {
+//    return new Response('Hello World')
 // }
 //
 // router.get('/hi', hiHandler)
@@ -340,9 +336,19 @@ import { Router } from '@tsndr/cloudflare-worker-router'
 
 const router = new Router()
 
-// router.get(/'hi', ({ res }) => {
-//    res.body = 'Hello World'
+/// Example Route
+//
+// router.get(/'hi', async () => {
+//    return new Response('Hello World')
 //}
+
+/// Example Route for splitting into multiple files
+//
+// async function hiHandler() {
+//    return new Response('Hello World')
+// }
+//
+// router.get('/hi', hiHandler)
 
 // TODO: add your routes here
 
