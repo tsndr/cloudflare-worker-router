@@ -33,7 +33,7 @@ Migrating from `v2.x.x`, check out the [Migration Guide](MIGRATION.md).
 ```typescript
 import { Router } from '@tsndr/cloudflare-worker-router'
 
-export interface Env {
+export type Env = {
     // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
     // MY_KV_NAMESPACE: KVNamespace
     //
@@ -287,7 +287,7 @@ npm i -D @tsndr/cloudflare-worker-router
 ```typescript
 import { Router } from '@tsndr/cloudflare-worker-router'
 
-export interface Env {
+export type Env = {
   // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
   // MY_KV_NAMESPACE: KVNamespace
   //
