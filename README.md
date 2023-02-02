@@ -26,7 +26,7 @@ I worked a lot with [Express.js](https://expressjs.com/) in the past and really 
 
 ## Usage
 
-Migrating from `v1.x.x`, check out the [Migration Guide](MIGRATION.md).
+Migrating from `v2.x.x`, check out the [Migration Guide](MIGRATION.md).
 
 ### TypeScript Example
 

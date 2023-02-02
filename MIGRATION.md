@@ -1,21 +1,16 @@
 # Migration Guide
 
-From `v1.x.x` to `v2.x.x`.
+From `v2.x.x` to `v3.x.x`.
+
 
 ## Contents
 
-- [Preparation](#preparation)
-- [Update](#update)
-- [Import / Require](#import--require)
-- [Routes](#routes)
+- [Update Router](#update-router)
+- [Handlers](#handlers)
 - [Fetch](#fetch--routerhandle)
 
 
-## Preparation
-
-Follow Cloudflare's [Migration Guide](https://developers.cloudflare.com/workers/wrangler/migration/migrating-from-wrangler-1/) to update your protject to [wrangler2](https://github.com/cloudflare/wrangler2).
-
-## Update
+## Update Router
 
 Update to the latest version version of the router.
 
@@ -23,34 +18,53 @@ Update to the latest version version of the router.
 npm i -D @tsndr/cloudflare-worker-router
 ```
 
-## Import / Require
 
-Switch from `require()` to `import`.
+## Handlers
+
+- Remove `res` and `next` from handler parameter list.
+- Replace `res.` with `return new Response()` / `return Response.json()`.
+- Remove `next()` calls from middlewares.
+
 
 ### Before
 
-```javascript
-const Router = require('@tsndr/cloudflare-worker-router')
+```typescript
+// Register global middleware
+router.use(({ env, req, res, next }) => {
+    if (req.headers.get('authorization') !== env.SECRET_TOKEN) {
+        res.status = 401
+        return
+    }
+
+    next()
+})
+
+// Simple get
+router.get('/user', ({ res }) => {
+    res.body = {
+        id: 1,
+        name: 'John Doe'
+    }
+})
 ```
 
 
 ### After
 
-```javascript
-import Router from '@tsndr/cloudflare-worker-router'
+```typescript
+// Register global middleware
+router.use(({ env, req }) => {
+    // Intercept if token doesn't match
+    if (req.headers.get('authorization') !== env.SECRET_TOKEN) {
+        return new Response(null, { status: 401 })
+    }
+})
+
+// Simple get
+router.get('/user', () => {
+    return Response.json({
+        id: 1,
+        name: 'John Doe'
+    })
+})
 ```
-
-
-## Routes
-
-Just add curly braces `{}`.
-
-
-### Before
-
-<a href="https://gist.github.com/tsndr/34e8544266ae15d51abd019d7c3d27ca" target="_blank"><img width="469" alt="Petrify 2022-06-24 at 5 57 01 PM" src="https://user-images.githubusercontent.com/2940127/175572731-a8729c1b-15e2-45ac-be80-7e8527c5502a.png"></a>
-
-
-### After
-
-<a href="https://gist.github.com/tsndr/8db6e8dd55e348015c2ff8e93dd6aa31" target="_blank"><img width="469" alt="Petrify 2022-06-24 at 5 55 56 PM" src="https://user-images.githubusercontent.com/2940127/175572549-0eea8fc4-3d90-412a-89cc-d2f4569f1139.png"></a>
