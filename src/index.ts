@@ -372,8 +372,8 @@ export class Router<TEnv = any, TExt = any> {
    /**
 	* Handle requests
 	*
-	* @param {TEnv} env
 	* @param {Request} request
+	* @param {TEnv} env
 	* @param {TExt} [ext]
 	* @returns {Promise<Response>}
 	*/
