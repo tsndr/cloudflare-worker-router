@@ -389,7 +389,7 @@ export class Router<TEnv = any, TExt = any> {
 			params: {},
 			query: {},
 			body: '',
-			bearer: () => request.headers.get('Authorization')?.replace('Bearer ', '').trim() ?? '',
+			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim() ?? '',
 		} as RouterRequest<TExt>
 
 		const route = this.getRoute(req)
