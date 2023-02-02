@@ -6,7 +6,7 @@
 * @property {string} url URL String
 * @property {RouterHandler[]} handlers Array of handler functions
 */
-export interface Route<TEnv, TExt> {
+export type Route<TEnv, TExt> = {
 	method: string
 	url: string
 	handlers: RouterHandler<TEnv, TExt>[]
@@ -20,7 +20,7 @@ export interface Route<TEnv, TExt> {
 * @property {RouterRequest} req Request Object
 * @property {ExecutionContext} ctx Context Object
 */
-export interface RouterContext<TEnv = any, TExt = any> {
+export type RouterContext<TEnv = any, TExt = any> = {
 	env: TEnv
 	req: RouterRequest<TExt>
 	ctx?: ExecutionContext
@@ -54,7 +54,7 @@ export type RouterRequest<TExt> = {
 *
 * @typedef RouterRequestParams
 */
-export interface RouterRequestParams {
+export type RouterRequestParams = {
 	[key: string]: string
 }
 
@@ -63,7 +63,7 @@ export interface RouterRequestParams {
 *
 * @typedef RouterRequestQuery
 */
-export interface RouterRequestQuery {
+export type RouterRequestQuery = {
 	[key: string]: string
 }
 
@@ -74,7 +74,7 @@ export interface RouterRequestQuery {
 * @param {RouterContext} ctx
 * @returns {Promise<Response | void> Response | void}
 */
-export interface RouterHandler<TEnv = any, TExt = any> {
+export type RouterHandler<TEnv = any, TExt = any> = {
 	(ctx: RouterContext<TEnv, TExt>): Promise<Response | void> | Response | void
 }
 
@@ -88,7 +88,7 @@ export interface RouterHandler<TEnv = any, TExt = any> {
 * @property {number} [maxAge=86400] Access-Control-Max-Age (default: `86400`)
 * @property {number} [optionsSuccessStatus=204] Return status code for OPTIONS request (default: `204`)
 */
-export interface RouterCorsConfig {
+export type RouterCorsConfig = {
 	allowOrigin?: string
 	allowMethods?: string
 	allowHeaders?: string
