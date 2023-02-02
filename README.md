@@ -12,7 +12,7 @@ I worked a lot with [Express.js](https://expressjs.com/) in the past and really 
 - [Features](#features)
 - [Usage](#usage)
 - [Reference](#reference)
-- [Setup](#setup)
+- [Getting started](#getting-started)
 
 
 ## Features
@@ -264,7 +264,7 @@ Key       | Type                | Description
 `query`   | `object`            | Object containing all query parameters
 
 
-## Setup
+## Getting started
 
 Please follow Cloudflare's [Get started guide](https://developers.cloudflare.com/workers/get-started/guide/) to install wrangler.
 
