@@ -36,7 +36,6 @@ export type RouterContext<TEnv = any, TExt = any> = {
 * @property {RouterRequestParams} params Object containing all parameters defined in the url string
 * @property {RouterRequestQuery} query Object containing all query parameters
 * @property {Headers} headers Request headers object
-* @property {string | any} body Only available if method is `POST`, `PUT`, `PATCH` or `DELETE`. Contains either the received body string or a parsed object if valid JSON was sent.
 * @property {IncomingRequestCfProperties} [cf] object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
 */
 export type RouterRequest<TExt> = {
@@ -45,7 +44,6 @@ export type RouterRequest<TExt> = {
 	params: RouterRequestParams
 	query: RouterRequestQuery
 	headers: Headers
-	body: string | any
 	raw: Request
 	arrayBuffer(): Promise<ArrayBuffer>
 	text(): Promise<string>
@@ -395,7 +393,7 @@ export class Router<TEnv = any, TExt = any> {
 			query: {},
 			arrayBuffer: request.arrayBuffer,
 			text: request.text,
-			json: request.json,
+			json: <T>(): Promise<T> => request.json<T>(),
 			formData: request.formData,
 			blob: request.blob,
 			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim() ?? '',
