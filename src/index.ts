@@ -47,8 +47,13 @@ export type RouterRequest<TExt> = {
 	headers: Headers
 	body: string | any
 	raw: Request
-	cf?: IncomingRequestCfProperties
+	arrayBuffer(): Promise<ArrayBuffer>
+	text(): Promise<string>
+	json<T>(): Promise<T>
+	formData(): Promise<FormData>
+	blob(): Promise<Blob>
 	bearer: () => string
+	cf?: IncomingRequestCfProperties
 } & TExt
 
 /**
@@ -388,14 +393,13 @@ export class Router<TEnv = any, TExt = any> {
 			raw: request,
 			params: {},
 			query: {},
-			body: '',
+			arrayBuffer: request.arrayBuffer,
+			text: request.text,
+			json: request.json,
+			formData: request.formData,
+			blob: request.blob,
 			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim() ?? '',
 		} as RouterRequest<TExt>
-
-		const route = this.getRoute(req)
-
-		if (!route)
-			return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
 
 		if (this.corsEnabled && req.method === 'OPTIONS') {
 			return new Response(null, {
@@ -403,6 +407,11 @@ export class Router<TEnv = any, TExt = any> {
 				status: this.corsConfig.optionsSuccessStatus
 			})
 		}
+
+		const route = this.getRoute(req)
+
+		if (!route)
+			return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
 
 		const handlers = [...this.globalHandlers, ...route.handlers]
 		const dbg = this.debugMode
