@@ -36,6 +36,7 @@ export type RouterContext<TEnv = any, TExt = any> = {
 * @property {RouterRequestParams} params Object containing all parameters defined in the url string
 * @property {RouterRequestQuery} query Object containing all query parameters
 * @property {Headers} headers Request headers object
+* @property {Request} raw Raw Request Object
 * @property {IncomingRequestCfProperties} [cf] object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
 */
 export type RouterRequest<TExt> = {
@@ -391,11 +392,11 @@ export class Router<TEnv = any, TExt = any> {
 			raw: request,
 			params: {},
 			query: {},
-			arrayBuffer: request.arrayBuffer,
-			text: request.text,
+			arrayBuffer: (): Promise<ArrayBuffer> => request.arrayBuffer(),
+			text: (): Promise<string> => request.text(),
 			json: <T>(): Promise<T> => request.json<T>(),
-			formData: request.formData,
-			blob: request.blob,
+			formData: (): Promise<FormData> => request.formData(),
+			blob: (): Promise<Blob> => request.blob(),
 			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim() ?? '',
 		} as RouterRequest<TExt>
 
