@@ -429,8 +429,10 @@ export class Router<TEnv = any, TExt = any> {
 		if (!response)
 			return new Response(this.debugMode ? 'Handler did not return a Response!' : null, { status: 404 })
 
-		if (this.corsEnabled)
+		if (this.corsEnabled) {
+			response = new Response(response.body, response)
 			this.setCorsHeaders(response.headers)
+		}
 
 		return response
 	}
