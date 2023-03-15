@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/tsndr/cloudflare-worker-router#readme",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20230115.0",
+    "@cloudflare/workers-types": "^4.20230307.0",
     "typescript": "^4.9.5"
   }
 }
