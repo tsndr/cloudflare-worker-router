@@ -102,6 +102,14 @@ export type RouterCorsConfig = {
 	optionsSuccessStatus?: number
 }
 
+export type RouterBuffer = {
+	arrayBuffer?: ArrayBuffer
+	text?: string
+	json?: any
+	formData?: FormData
+	blob?: Blob
+}
+
 /**
 * Router
 *
@@ -141,6 +149,14 @@ export class Router<TEnv = any, TExt = any> {
 	* @type {RouterCorsConfig}
 	*/
 	protected corsConfig: RouterCorsConfig = {}
+
+	/**
+	* Buffer
+	*
+	* @protected
+	* @type {RouterBuffer}
+	*/
+	protected buffer: RouterBuffer = {}
 
 	/**
 	* CORS enabled
@@ -392,11 +408,11 @@ export class Router<TEnv = any, TExt = any> {
 			raw: request,
 			params: {},
 			query: {},
-			arrayBuffer: (): Promise<ArrayBuffer> => request.arrayBuffer(),
-			text: (): Promise<string> => request.text(),
-			json: <T>(): Promise<T> => request.json<T>(),
-			formData: (): Promise<FormData> => request.formData(),
-			blob: (): Promise<Blob> => request.blob(),
+			arrayBuffer: async (): Promise<ArrayBuffer> => this.buffer.arrayBuffer ? this.buffer.arrayBuffer : this.buffer.arrayBuffer = await request.arrayBuffer(),
+			text: async (): Promise<string> => this.buffer.text ? this.buffer.text : this.buffer.text = await request.text(),
+			json: async <T>(): Promise<T> => this.buffer.json ? this.buffer.json : this.buffer.json = await request.json<T>(),
+			formData: async (): Promise<FormData> => this.buffer.formData ? this.buffer.formData : this.buffer.formData = await request.formData(),
+			blob: async (): Promise<Blob> => this.buffer.blob ? this.buffer.blob : this.buffer.blob = await request.blob(),
 			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim() ?? '',
 		} as RouterRequest<TExt>
 
