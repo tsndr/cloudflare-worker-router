@@ -15,7 +15,7 @@ From `v2.x.x` to `v3.x.x`.
 Update to the latest version version of the router.
 
 ```bash
-npm i -D @tsndr/cloudflare-worker-router
+npm i -D @tsndr/cloudflare-worker-router@^3
 ```
 
 
