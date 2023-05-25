@@ -6,10 +6,10 @@
 * @property {string} url URL String
 * @property {RouterHandler[]} handlers Array of handler functions
 */
-export type Route<TEnv, TExt> = {
+export type Route<TEnv, TCtx, TReq> = {
 	method: string
 	url: string
-	handlers: RouterHandler<TEnv, TExt>[]
+	handlers: RouterHandler<TEnv, TCtx, TReq>[]
 }
 
 /**
@@ -20,9 +20,9 @@ export type Route<TEnv, TExt> = {
 * @property {RouterRequest} req Request Object
 * @property {ExecutionContext} ctx Context Object
 */
-export type RouterContext<TEnv = any, TExt = any> = {
+export type RouterContext<TEnv = any, TCtx = any, TReq = any> = TCtx & {
 	env: TEnv
-	req: RouterRequest<TExt>
+	req: RouterRequest<TReq>
 	dbg: boolean
 	ctx?: ExecutionContext
 }
@@ -39,7 +39,7 @@ export type RouterContext<TEnv = any, TExt = any> = {
 * @property {Request} raw Raw Request Object
 * @property {IncomingRequestCfProperties} [cf] object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
 */
-export type RouterRequest<TExt> = {
+export type RouterRequest<TReq> = TReq & {
 	url: string
 	method: string
 	params: RouterRequestParams
@@ -53,7 +53,7 @@ export type RouterRequest<TExt> = {
 	blob(): Promise<Blob>
 	bearer: () => string | undefined
 	cf?: IncomingRequestCfProperties
-} & TExt
+}
 
 /**
 * Request Parameters
@@ -80,8 +80,8 @@ export type RouterRequestQuery = {
 * @param {RouterContext} ctx
 * @returns {Promise<Response | void> Response | void}
 */
-export type RouterHandler<TEnv = any, TExt = any> = {
-	(ctx: RouterContext<TEnv, TExt>): Promise<Response | void> | Response | void
+export type RouterHandler<TEnv = any, TCtx = any, TReq = any> = {
+	(ctx: RouterContext<TEnv, TCtx, TReq>): Promise<Response | void> | Response | void
 }
 
 /**
@@ -116,7 +116,7 @@ export type RouterBuffer = {
 * @public
 * @class
 */
-export class Router<TEnv = any, TExt = any> {
+export class Router<TEnv = any, TCtx = any, TReq = any> {
 
 	/**
 	* Router Array
@@ -124,7 +124,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @protected
 	* @type {Route[]}
 	*/
-	protected routes: Route<TEnv, TExt>[] = []
+	protected routes: Route<TEnv, TCtx, TReq>[] = []
 
 	/**
 	* Global Handlers
@@ -132,7 +132,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @protected
 	* @type {RouterHandler[]}
 	*/
-	protected globalHandlers: RouterHandler<TEnv, TExt>[] = []
+	protected globalHandlers: RouterHandler<TEnv, TCtx, TReq>[] = []
 
 	/**
 	* Debug Mode
@@ -172,7 +172,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public use(...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public use(...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		for (let handler of handlers) {
 			this.globalHandlers.push(handler)
 		}
@@ -186,7 +186,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public connect(url: string, ...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public connect(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		return this.register('CONNECT', url, handlers)
 	}
 
@@ -197,7 +197,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public delete(url: string, ...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public delete(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		return this.register('DELETE', url, handlers)
 	}
 
@@ -208,7 +208,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public get(url: string, ...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public get(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		return this.register('GET', url, handlers)
 	}
 
@@ -219,7 +219,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public head(url: string, ...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public head(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		return this.register('HEAD', url, handlers)
 	}
 
@@ -230,7 +230,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public options(url: string, ...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public options(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		return this.register('OPTIONS', url, handlers)
 	}
 
@@ -241,7 +241,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public patch(url: string, ...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public patch(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		return this.register('PATCH', url, handlers)
 	}
 
@@ -252,7 +252,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public post(url: string, ...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public post(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		return this.register('POST', url, handlers)
 	}
 
@@ -263,7 +263,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public put(url: string, ...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public put(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		return this.register('PUT', url, handlers)
 	}
 
@@ -274,7 +274,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public trace(url: string, ...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public trace(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		return this.register('TRACE', url, handlers)
 	}
 
@@ -285,7 +285,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public any(url: string, ...handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	public any(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		return this.register('*', url, handlers)
 	}
 
@@ -295,7 +295,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
 	* @returns {Router}
 	*/
-	public debug(state: boolean = true): Router<TEnv, TExt> {
+	public debug(state: boolean = true): Router<TEnv, TCtx, TReq> {
 		this.debugMode = state
 		return this
 	}
@@ -306,7 +306,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param {RouterCorsConfig} [config]
 	* @returns {Router}
 	*/
-	public cors(config?: RouterCorsConfig): Router<TEnv, TExt> {
+	public cors(config?: RouterCorsConfig): Router<TEnv, TCtx, TReq> {
 		this.corsEnabled = true
 		this.corsConfig = {
 			allowOrigin: config?.allowOrigin ?? '*',
@@ -339,7 +339,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param {RouterHandler[]} handlers Arrar of handler functions
 	* @returns {Router}
 	*/
-	private register(method: string, url: string, handlers: RouterHandler<TEnv, TExt>[]): Router<TEnv, TExt> {
+	private register(method: string, url: string, handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
 		this.routes.push({
 			method,
 			url,
@@ -356,7 +356,7 @@ export class Router<TEnv = any, TExt = any> {
 	* @param {RouterRequest} request
 	* @returns {Route | undefined}
 	*/
-	private getRoute(request: RouterRequest<TExt>): Route<TEnv, TExt> | undefined {
+	private getRoute(request: RouterRequest<TReq>): Route<TEnv, TCtx, TReq> | undefined {
 		const url = new URL(request.url)
 		const pathArr = url.pathname.split('/').filter(i => i)
 
@@ -395,12 +395,13 @@ export class Router<TEnv = any, TExt = any> {
 	*
 	* @param {Request} request
 	* @param {TEnv} env
-	* @param {TExt} [ext]
+	* @param {TCtx} [extCtx]
+	* @param {TReq} [extReq]
 	* @returns {Promise<Response>}
 	*/
-	public async handle(request: Request, env: TEnv, ctx?: ExecutionContext, ext?: TExt): Promise<Response> {
+	public async handle(request: Request, env: TEnv, ctx?: ExecutionContext, extCtx?: TCtx, extReq?: TReq): Promise<Response> {
 		const req = {
-			...(ext ?? {}),
+			...(extReq ?? {}),
 			method: request.method,
 			headers: request.headers,
 			url: request.url,
@@ -414,7 +415,7 @@ export class Router<TEnv = any, TExt = any> {
 			formData: async (): Promise<FormData> => this.buffer.formData ? this.buffer.formData : this.buffer.formData = await request.formData(),
 			blob: async (): Promise<Blob> => this.buffer.blob ? this.buffer.blob : this.buffer.blob = await request.blob(),
 			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim()
-		} as RouterRequest<TExt>
+		} as RouterRequest<TReq>
 
 		if (this.corsEnabled && req.method === 'OPTIONS') {
 			return new Response(null, {
@@ -434,7 +435,15 @@ export class Router<TEnv = any, TExt = any> {
 		let response: Response | undefined
 
 		for (const handler of handlers) {
-			const res = await handler({ env, req, dbg, ctx })
+			const context = {
+				...(extCtx ?? {}),
+				env,
+				req,
+				dbg,
+				ctx
+			} as RouterContext<TEnv, TCtx, TReq>
+
+			const res = await handler(context)
 
 			if (res) {
 				response = res
