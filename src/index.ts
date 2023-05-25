@@ -51,7 +51,7 @@ export type RouterRequest<TExt> = {
 	json<T>(): Promise<T>
 	formData(): Promise<FormData>
 	blob(): Promise<Blob>
-	bearer: () => string
+	bearer: () => string | undefined
 	cf?: IncomingRequestCfProperties
 } & TExt
 
@@ -413,7 +413,7 @@ export class Router<TEnv = any, TExt = any> {
 			json: async <T>(): Promise<T> => this.buffer.json ? this.buffer.json : this.buffer.json = await request.json<T>(),
 			formData: async (): Promise<FormData> => this.buffer.formData ? this.buffer.formData : this.buffer.formData = await request.formData(),
 			blob: async (): Promise<Blob> => this.buffer.blob ? this.buffer.blob : this.buffer.blob = await request.blob(),
-			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim() ?? '',
+			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim()
 		} as RouterRequest<TExt>
 
 		if (this.corsEnabled && req.method === 'OPTIONS') {
