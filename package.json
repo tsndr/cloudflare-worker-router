@@ -1,6 +1,6 @@
 {
   "name": "@tsndr/cloudflare-worker-router",
-  "version": "3.0.0-14",
+  "version": "3.0.0-15",
   "description": "",
   "main": "index.js",
   "types": "index.d.ts",
