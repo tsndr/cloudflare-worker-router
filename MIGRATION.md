@@ -7,7 +7,6 @@ From `v2.x.x` to `v3.x.x`.
 
 - [Update Router](#update-router)
 - [Handlers](#handlers)
-- [Fetch](#fetch--routerhandle)
 
 
 ## Update Router
