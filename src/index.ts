@@ -151,14 +151,6 @@ export class Router<TEnv = any, TCtx = any, TReq = any> {
 	protected corsConfig: RouterCorsConfig = {}
 
 	/**
-	* Buffer
-	*
-	* @protected
-	* @type {RouterBuffer}
-	*/
-	protected buffer: RouterBuffer = {}
-
-	/**
 	* CORS enabled
 	*
 	* @protected
@@ -390,7 +382,7 @@ export class Router<TEnv = any, TCtx = any, TReq = any> {
 		}) || this.routes.find(r => r.url === '*' && [request.method, '*'].includes(r.method))
 	}
 
-   /**
+	/**
 	* Handle requests
 	*
 	* @param {Request} request
@@ -400,6 +392,7 @@ export class Router<TEnv = any, TCtx = any, TReq = any> {
 	* @returns {Promise<Response>}
 	*/
 	public async handle(request: Request, env: TEnv, ctx?: ExecutionContext, extCtx?: TCtx, extReq?: TReq): Promise<Response> {
+		const buffer: RouterBuffer = {};
 		const req = {
 			...(extReq ?? {}),
 			method: request.method,
@@ -409,11 +402,11 @@ export class Router<TEnv = any, TCtx = any, TReq = any> {
 			raw: request,
 			params: {},
 			query: {},
-			arrayBuffer: async (): Promise<ArrayBuffer> => this.buffer.arrayBuffer ? this.buffer.arrayBuffer : this.buffer.arrayBuffer = await request.arrayBuffer(),
-			text: async (): Promise<string> => this.buffer.text ? this.buffer.text : this.buffer.text = await request.text(),
-			json: async <T>(): Promise<T> => this.buffer.json ? this.buffer.json : this.buffer.json = await request.json<T>(),
-			formData: async (): Promise<FormData> => this.buffer.formData ? this.buffer.formData : this.buffer.formData = await request.formData(),
-			blob: async (): Promise<Blob> => this.buffer.blob ? this.buffer.blob : this.buffer.blob = await request.blob(),
+			arrayBuffer: async (): Promise<ArrayBuffer> => buffer.arrayBuffer ? buffer.arrayBuffer : buffer.arrayBuffer = await request.arrayBuffer(),
+			text: async (): Promise<string> => buffer.text ? buffer.text : buffer.text = await request.text(),
+			json: async <T>(): Promise<T> => buffer.json ? buffer.json : buffer.json = await request.json<T>(),
+			formData: async (): Promise<FormData> => buffer.formData ? buffer.formData : buffer.formData = await request.formData(),
+			blob: async (): Promise<Blob> => buffer.blob ? buffer.blob : buffer.blob = await request.blob(),
 			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim()
 		} as RouterRequest<TReq>
 
