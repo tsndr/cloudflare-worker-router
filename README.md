@@ -210,13 +210,15 @@ If enabled will overwrite other `OPTIONS` requests.
 
 #### `config` (object, optional)
 
-Key                    | Type      | Default Value
----------------------- | --------- | -------------
-`allowOrigin`          | `string`  | `*`
-`allowMethods`         | `string`  | `*`
-`allowHeaders`         | `string`  | `*`
-`maxAge`               | `integer` | `86400`
-`optionsSuccessStatus` | `integer` | `204`
+Key                        | Type       | Default Value
+-------------------------- | ---------- | -------------
+`allowOrigin`              | `string`   | `*`
+`allowMethods`             | `string`   | `*`
+`allowHeaders`             | `string`   | `*`
+`allowCredentials`         | `boolean`  | `undefined`
+`vary`                     | `string`   | `undefined`
+`maxAge`                   | `integer`  | `86400`
+`optionsSuccessStatus`     | `integer`  | `204`
 
 
 ### Supported Methods
