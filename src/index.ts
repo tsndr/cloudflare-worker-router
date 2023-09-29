@@ -91,6 +91,8 @@ export type RouterHandler<TEnv = any, TCtx = any, TReq = any> = {
 * @property {string} [allowOrigin="*"] Access-Control-Allow-Origin (default: `*`)
 * @property {string} [allowMethods="*"] Access-Control-Allow-Methods (default: `*`)
 * @property {string} [allowHeaders="*"] Access-Control-Allow-Headers (default: `*`)
+* @property {boolean} [allowCredentials="true"] Access-Control-Allow-Credentials (default: undefined)
+* @property {string} [vary="origin"] vary (default: undefined)
 * @property {number} [maxAge=86400] Access-Control-Max-Age (default: `86400`)
 * @property {number} [optionsSuccessStatus=204] Return status code for OPTIONS request (default: `204`)
 */
@@ -98,6 +100,8 @@ export type RouterCorsConfig = {
 	allowOrigin?: string
 	allowMethods?: string
 	allowHeaders?: string
+	allowCredentials?: boolean
+	vary?: string
 	maxAge?: number
 	optionsSuccessStatus?: number
 }
@@ -304,6 +308,8 @@ export class Router<TEnv = any, TCtx = any, TReq = any> {
 			allowOrigin: config?.allowOrigin ?? '*',
 			allowMethods: config?.allowMethods ?? '*',
 			allowHeaders: config?.allowHeaders ?? '*',
+			allowCredentials: config?.allowCredentials ?? undefined,
+			vary: config?.vary ?? undefined,
 			maxAge: config?.maxAge ?? 86400,
 			optionsSuccessStatus: config?.optionsSuccessStatus ?? 204
 		}
@@ -317,6 +323,10 @@ export class Router<TEnv = any, TCtx = any, TReq = any> {
 			headers.set('Access-Control-Allow-Methods', this.corsConfig.allowMethods)
 		if (this.corsConfig.allowHeaders && !headers.has('Access-Control-Allow-Headers'))
 			headers.set('Access-Control-Allow-Headers', this.corsConfig.allowHeaders)
+		if (this.corsConfig.allowCredentials && !headers.has('Access-Control-Allow-Credentials'))
+			headers.set('Access-Control-Allow-Credentials', this.corsConfig.allowCredentials.toString())
+		if (this.corsConfig.vary && !headers.has('vary'))
+			headers.set('vary', this.corsConfig.vary.toString())
 		if (this.corsConfig.maxAge && !headers.has('Access-Control-Max-Age'))
 			headers.set('Access-Control-Max-Age', this.corsConfig.maxAge.toString())
 		return headers
