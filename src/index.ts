@@ -412,11 +412,11 @@ export class Router<TEnv = any, TCtx = any, TReq = any> {
 			raw: request,
 			params: {},
 			query: {},
-			arrayBuffer: async (): Promise<ArrayBuffer> => buffer.arrayBuffer ? buffer.arrayBuffer : buffer.arrayBuffer = await request.arrayBuffer(),
-			text: async (): Promise<string> => buffer.text ? buffer.text : buffer.text = await request.text(),
-			json: async <T>(): Promise<T> => buffer.json ? buffer.json : buffer.json = await request.json<T>(),
-			formData: async (): Promise<FormData> => buffer.formData ? buffer.formData : buffer.formData = await request.formData(),
-			blob: async (): Promise<Blob> => buffer.blob ? buffer.blob : buffer.blob = await request.blob(),
+			arrayBuffer: async (): Promise<ArrayBuffer> => buffer.arrayBuffer ? buffer.arrayBuffer : buffer.arrayBuffer = await request.clone().arrayBuffer(),
+			text: async (): Promise<string> => buffer.text ? buffer.text : buffer.text = await request.clone().text(),
+			json: async <T>(): Promise<T> => buffer.json ? buffer.json : buffer.json = await request.clone().json<T>(),
+			formData: async (): Promise<FormData> => buffer.formData ? buffer.formData : buffer.formData = await request.clone().formData(),
+			blob: async (): Promise<Blob> => buffer.blob ? buffer.blob : buffer.blob = await request.clone().blob(),
 			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim()
 		} as RouterRequest<TReq>
 
