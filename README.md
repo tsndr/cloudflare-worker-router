@@ -33,6 +33,10 @@ Migrating from `v2.x.x`, check out the [Migration Guide](MIGRATION.md).
 ```typescript
 import { Router } from '@tsndr/cloudflare-worker-router'
 
+// Env Types
+export type Var<T = string> = T
+export type Secret<T = string> = T
+
 export type Env = {
     // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
     // MY_KV_NAMESPACE: KVNamespace
@@ -43,11 +47,23 @@ export type Env = {
     // Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
     // MY_BUCKET: R2Bucket
 
-    SECRET_TOKEN: string
+    ENVIRONMENT: Var<'dev' | 'prod'>
+
+    SECRET_TOKEN: Secret
 }
 
-// Initialize router
-const router = new Router<Env>()
+// Request Extension
+export type ExtReq = {
+    userId?: number
+}
+
+// Context Extension
+export type ExtCtx = {
+    //sentry?: Toucan
+}
+
+// Initialize Router
+const router = new Router<Env, ExtCtx, ExtReq>()
 
 // Enabling build in CORS support
 router.cors()
@@ -289,6 +305,10 @@ npm i -D @tsndr/cloudflare-worker-router
 ```typescript
 import { Router } from '@tsndr/cloudflare-worker-router'
 
+// Env Types
+export type Var<T = string> = T
+export type Secret<T = string> = T
+
 export type Env = {
   // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
   // MY_KV_NAMESPACE: KVNamespace
@@ -298,32 +318,57 @@ export type Env = {
   //
   // Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
   // MY_BUCKET: R2Bucket
+  //
+  // Example Variable
+  // ENVIRONMENT: Var<'dev' | 'prod'>
+  //
+  // Example Secret
+  // JWT_SECRET: Secret
 }
 
-const router = new Router<Env>()
+// Request Extension
+export type ExtReq = {
+  userId?: number
+}
+
+// Context Extension
+export type ExtCtx = {
+  //sentry?: Toucan
+}
+
+// Handler Type
+export type Handler = RouterHandler<Env, ExtCtx, ExtReq>
+
+// Initialize Router
+const router = new Router<Env, ExtCtx, ExtReq>()
+
+// Enable Debug Mode
+router.debug()
+
+// Enabling build in CORS support
+//router.cors()
 
 /// Example Route
 //
 // router.get('/hi', async () => {
-//    return new Response('Hello World')
-//})
+//   return new Response('Hello World')
+// })
 
 
 /// Example Route for splitting into multiple files
 //
-// const hiHandler: RouteHandler<Env> = async () => {
+// const helloHandler: Handler = async () => {
 //    return new Response('Hello World')
 // }
 //
-// router.get('/hi', hiHandler)
-
+// router.get('/hellow', helloHandler)
 
 // TODO: add your routes here
 
 export default {
-    async fetch(request: Request, env: Env, ctx: ExecutionContext) {
-        return router.handle(request, env, ctx)
-    }
+  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    return router.handle(request, env, ctx)
+  }
 }
 ```
 
@@ -337,6 +382,12 @@ export default {
 import { Router } from '@tsndr/cloudflare-worker-router'
 
 const router = new Router()
+
+// Enable Debug Mode
+//router.debug()
+
+// Enabling build in CORS support
+//router.cors()
 
 /// Example Route
 //
