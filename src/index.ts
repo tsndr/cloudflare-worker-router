@@ -20,7 +20,7 @@ export type Route<TEnv, TCtx, TReq> = {
 * @property {RouterRequest} req Request Object
 * @property {ExecutionContext} ctx Context Object
 */
-export type RouterContext<TEnv = any, TCtx = any, TReq = any> = TCtx & {
+export type RouterContext<TEnv = any, TCtx = {}, TReq = {}> = TCtx & {
 	env: TEnv
 	req: RouterRequest<TReq>
 	dbg: boolean
@@ -80,7 +80,7 @@ export type RouterRequestQuery = {
 * @param {RouterContext} ctx
 * @returns {Promise<Response | void> Response | void}
 */
-export type RouterHandler<TEnv = any, TCtx = any, TReq = any> = {
+export type RouterHandler<TEnv = any, TCtx = {}, TReq = {}> = {
 	(ctx: RouterContext<TEnv, TCtx, TReq>): Promise<Response | void> | Response | void
 }
 
@@ -120,7 +120,7 @@ export type RouterBuffer = {
 * @public
 * @class
 */
-export class Router<TEnv = any, TCtx = any, TReq = any> {
+export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 
 	/**
 	* Router Array
