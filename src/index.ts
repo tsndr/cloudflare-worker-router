@@ -6,10 +6,10 @@
 * @property {string} url URL String
 * @property {RouterHandler[]} handlers Array of handler functions
 */
-export type Route<TEnv, TCtx, TReq> = {
+export type Route<Env, CtxExt, ReqExt> = {
 	method: string
 	url: string
-	handlers: RouterHandler<TEnv, TCtx, TReq>[]
+	handlers: RouterHandler<Env, CtxExt, ReqExt>[]
 }
 
 /**
@@ -20,9 +20,9 @@ export type Route<TEnv, TCtx, TReq> = {
 * @property {RouterRequest} req Request Object
 * @property {ExecutionContext} ctx Context Object
 */
-export type RouterContext<TEnv = any, TCtx = {}, TReq = {}> = TCtx & {
-	env: TEnv
-	req: RouterRequest<TReq>
+export type RouterContext<Env = any, CtxExt = {}, ReqExt = {}> = CtxExt & {
+	env: Env
+	req: RouterRequest<ReqExt>
 	dbg: boolean
 	ctx?: ExecutionContext
 }
@@ -39,7 +39,7 @@ export type RouterContext<TEnv = any, TCtx = {}, TReq = {}> = TCtx & {
 * @property {Request} raw Raw Request Object
 * @property {IncomingRequestCfProperties} [cf] object containing custom Cloudflare properties. (https://developers.cloudflare.com/workers/examples/accessing-the-cloudflare-object)
 */
-export type RouterRequest<TReq> = TReq & {
+export type RouterRequest<ReqExt> = ReqExt & {
 	url: string
 	method: string
 	params: RouterRequestParams
@@ -51,7 +51,7 @@ export type RouterRequest<TReq> = TReq & {
 	json<T>(): Promise<T>
 	formData(): Promise<FormData>
 	blob(): Promise<Blob>
-	bearer: () => string | undefined
+	bearer(): string | undefined
 	cf?: IncomingRequestCfProperties
 }
 
@@ -80,8 +80,8 @@ export type RouterRequestQuery = {
 * @param {RouterContext} ctx
 * @returns {Promise<Response | void> Response | void}
 */
-export type RouterHandler<TEnv = any, TCtx = {}, TReq = {}> = {
-	(ctx: RouterContext<TEnv, TCtx, TReq>): Promise<Response | void> | Response | void
+export type RouterHandler<Env = any, CtxExt = {}, ReqExt = {}> = {
+	(ctx: RouterContext<Env, CtxExt, ReqExt>): Promise<Response | void> | Response | void
 }
 
 /**
@@ -120,7 +120,7 @@ export type RouterBuffer = {
 * @public
 * @class
 */
-export class Router<TEnv = any, TCtx = {}, TReq = {}> {
+export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 
 	/**
 	* Router Array
@@ -128,7 +128,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @protected
 	* @type {Route[]}
 	*/
-	protected routes: Route<TEnv, TCtx, TReq>[] = []
+	protected routes: Route<Env, CtxExt, ReqExt>[] = []
 
 	/**
 	* Global Handlers
@@ -136,7 +136,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @protected
 	* @type {RouterHandler[]}
 	*/
-	protected globalHandlers: RouterHandler<TEnv, TCtx, TReq>[] = []
+	protected globalHandlers: RouterHandler<Env, CtxExt, ReqExt>[] = []
 
 	/**
 	* Debug Mode
@@ -168,7 +168,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public use(...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public use(...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		for (let handler of handlers) {
 			this.globalHandlers.push(handler)
 		}
@@ -182,7 +182,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public connect(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public connect(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('CONNECT', url, handlers)
 	}
 
@@ -193,7 +193,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public delete(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public delete(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('DELETE', url, handlers)
 	}
 
@@ -204,7 +204,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public get(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public get(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('GET', url, handlers)
 	}
 
@@ -215,7 +215,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public head(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public head(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('HEAD', url, handlers)
 	}
 
@@ -226,7 +226,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public options(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public options(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('OPTIONS', url, handlers)
 	}
 
@@ -237,7 +237,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public patch(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public patch(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('PATCH', url, handlers)
 	}
 
@@ -248,7 +248,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public post(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public post(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('POST', url, handlers)
 	}
 
@@ -259,7 +259,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public put(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public put(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('PUT', url, handlers)
 	}
 
@@ -270,7 +270,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public trace(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public trace(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('TRACE', url, handlers)
 	}
 
@@ -281,7 +281,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param  {RouterHandler[]} handlers
 	* @returns {Router}
 	*/
-	public any(url: string, ...handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	public any(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('*', url, handlers)
 	}
 
@@ -291,7 +291,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param {boolean} [state=true] Whether to turn on or off debug mode (default: true)
 	* @returns {Router}
 	*/
-	public debug(state: boolean = true): Router<TEnv, TCtx, TReq> {
+	public debug(state: boolean = true): Router<Env, CtxExt, ReqExt> {
 		this.debugMode = state
 		return this
 	}
@@ -302,7 +302,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param {RouterCorsConfig} [config]
 	* @returns {Router}
 	*/
-	public cors(config?: RouterCorsConfig): Router<TEnv, TCtx, TReq> {
+	public cors(config?: RouterCorsConfig): Router<Env, CtxExt, ReqExt> {
 		this.corsEnabled = true
 		this.corsConfig = {
 			allowOrigin: config?.allowOrigin ?? '*',
@@ -341,7 +341,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param {RouterHandler[]} handlers Arrar of handler functions
 	* @returns {Router}
 	*/
-	private register(method: string, url: string, handlers: RouterHandler<TEnv, TCtx, TReq>[]): Router<TEnv, TCtx, TReq> {
+	private register(method: string, url: string, handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		this.routes.push({
 			method,
 			url,
@@ -358,7 +358,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* @param {RouterRequest} request
 	* @returns {Route | undefined}
 	*/
-	private getRoute(request: RouterRequest<TReq>): Route<TEnv, TCtx, TReq> | undefined {
+	private getRoute(request: RouterRequest<ReqExt>): Route<Env, CtxExt, ReqExt> | undefined {
 		const url = new URL(request.url)
 		const pathArr = url.pathname.split('/').filter(i => i)
 
@@ -396,15 +396,15 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 	* Handle requests
 	*
 	* @param {Request} request
-	* @param {TEnv} env
-	* @param {TCtx} [extCtx]
-	* @param {TReq} [extReq]
+	* @param {Env} env
+	* @param {CtxExt} [ctxExt]
+	* @param {ReqExt} [reqExt]
 	* @returns {Promise<Response>}
 	*/
-	public async handle(request: Request, env: TEnv, ctx?: ExecutionContext, extCtx?: TCtx, extReq?: TReq): Promise<Response> {
-		const buffer: RouterBuffer = {};
+	public async handle(request: Request, env: Env, ctx?: ExecutionContext, ctxExt?: CtxExt, reqExt?: ReqExt): Promise<Response> {
+		const buffer: RouterBuffer = {}
 		const req = {
-			...(extReq ?? {}),
+			...(reqExt ?? {}),
 			method: request.method,
 			headers: request.headers,
 			url: request.url,
@@ -418,7 +418,7 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 			formData: async (): Promise<FormData> => buffer.formData ? buffer.formData : buffer.formData = await request.clone().formData(),
 			blob: async (): Promise<Blob> => buffer.blob ? buffer.blob : buffer.blob = await request.clone().blob(),
 			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim()
-		} as RouterRequest<TReq>
+		} as RouterRequest<ReqExt>
 
 		if (this.corsEnabled && req.method === 'OPTIONS') {
 			return new Response(null, {
@@ -439,12 +439,12 @@ export class Router<TEnv = any, TCtx = {}, TReq = {}> {
 
 		for (const handler of handlers) {
 			const context = {
-				...(extCtx ?? {}),
+				...(ctxExt ?? {}),
 				env,
 				req,
 				dbg,
 				ctx
-			} as RouterContext<TEnv, TCtx, TReq>
+			} as RouterContext<Env, CtxExt, ReqExt>
 
 			const res = await handler(context)
 
