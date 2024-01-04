@@ -138,6 +138,15 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 	*/
 	protected globalHandlers: RouterHandler<Env, CtxExt, ReqExt>[] = []
 
+
+	/**
+	* Group routers
+	*
+	* @protected
+	* @type {RouterHandler[]}
+	*/
+	protected groupRouters: Record<string, Router<Env, CtxExt, ReqExt>[]> = {}
+
 	/**
 	* Debug Mode
 	*
@@ -171,6 +180,22 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 	public use(...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		for (let handler of handlers) {
 			this.globalHandlers.push(handler)
+		}
+		return this
+	}
+
+	/**
+	* Register group routers
+	*
+	* @param {Router[]} routers
+	* @returns {Router}
+	*/
+	public group(url: string, ...routers: Router<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
+		const path = url.split("/").filter(i => i).join('/')
+		if (!this.groupRouters[path]) {
+			this.groupRouters[path] = routers
+		} else {
+			this.groupRouters[path].push(...routers)
 		}
 		return this
 	}
@@ -354,13 +379,18 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 	/**
 	* Get Route by request
 	*
-	* @private
+	* @protected
 	* @param {RouterRequest} request
+	* @param {string} [reqPath]
 	* @returns {Route | undefined}
 	*/
-	private getRoute(request: RouterRequest<ReqExt>): Route<Env, CtxExt, ReqExt> | undefined {
-		const url = new URL(request.url)
-		const pathArr = url.pathname.split('/').filter(i => i)
+	protected getRoute(request: RouterRequest<ReqExt>, reqPath?: string): Route<Env, CtxExt, ReqExt> | undefined {
+		const path = reqPath || new URL(request.url).pathname.split('/').filter(i => i).join('/')
+
+		let route = this.getGroupRoute(request, path)
+		if (route) return route
+
+		const pathArr = path.split('/').filter(i => i)
 
 		return this.routes.find(r => {
 			const routeArr = r.url.split('/').filter(i => i)
@@ -382,7 +412,8 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 
 			const query: any = {}
 
-			for (const [k, v] of url.searchParams.entries()) {
+			const { searchParams } = new URL(request.url)
+			for (const [k, v] of searchParams.entries()) {
 				query[k] = v
 			}
 
@@ -390,6 +421,49 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 
 			return true
 		}) || this.routes.find(r => r.url === '*' && [request.method, '*'].includes(r.method))
+	}
+
+	/**
+	* Get Group Route by request
+	*
+	* @protected
+	* @param {RouterRequest} request
+	* @param {string} reqPath
+	* @returns {Route | undefined}
+	*/
+	protected getGroupRoute(request: RouterRequest<ReqExt>, reqPath: string): Route<Env, CtxExt, ReqExt> | undefined {
+		let groupRoute: Route<Env, CtxExt, ReqExt> | undefined
+
+		for (const path of Object.keys(this.groupRouters)) {
+			if (reqPath.startsWith(path)) {
+				for (const router of this.groupRouters[path]) {
+					groupRoute = router.getRoute(request, reqPath.slice(path.length))
+					if (groupRoute) return groupRoute
+				}
+			}
+		}
+		return groupRoute
+	}
+
+	/**
+	* Get Group Route by request
+	*
+	* @protected
+	* @param {string} reqPath
+	* @returns {RouterHandler}
+	*/
+	protected getMiddlewares(reqPath: string): RouterHandler<Env, CtxExt, ReqExt>[] {
+		const handlers = [...this.globalHandlers]
+
+		for (const path of Object.keys(this.groupRouters)) {
+			if (reqPath.startsWith(path)) {
+				for (const router of this.groupRouters[path]) {
+					const groupHanlders = router.getMiddlewares(reqPath.slice(path.length))
+					handlers.push(...groupHanlders)
+				}
+			}
+		}
+		return handlers
 	}
 
 	/**
@@ -432,7 +506,8 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 		if (!route)
 			return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
 
-		const handlers = [...this.globalHandlers, ...route.handlers]
+		const reqPath = new URL(req.url).pathname.split('/').filter(i => i).join('/')
+		const handlers = this.getMiddlewares(reqPath).concat(route.handlers)
 		const dbg = this.debugMode
 
 		let response: Response | undefined

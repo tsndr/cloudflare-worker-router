@@ -113,6 +113,21 @@ router.delete('/user/:id', ({ env, req }) => {
   return Response.json({ userId })
 })
 
+// Add group routes
+const bookRouter = new Router()
+bookRouter.use(({ req }) => {
+	if (req.query['book']) {
+		return new Response(null, { status: 401 })
+	}
+})
+
+router.group('book', bookRouter)
+
+bookRouter.get('/bing', () => {
+	return Response.json({ book: 'book' })
+})
+
+
 // Listen Cloudflare Workers Fetch Event
 export default {
     async fetch(request: Request, env: Env, ctx: ExecutionContext) {
