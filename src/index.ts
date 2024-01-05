@@ -458,7 +458,7 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 		for (const path of Object.keys(this.groupRouters)) {
 			if (reqPath.startsWith(path)) {
 				for (const router of this.groupRouters[path]) {
-					const groupHanlders = router.getMiddlewares(reqPath.slice(path.length))
+					const groupHanlders = router.getMiddlewares(reqPath.slice(path.length) || '/')
 					handlers.push(...groupHanlders)
 				}
 			}
