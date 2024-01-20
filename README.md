@@ -255,7 +255,6 @@ Key                        | Type       | Default Value
 ### Supported Methods
 
 - `router.any(url, [...handlers])`
-- `router.connect(url, [...handlers])`
 - `router.delete(url, [...handlers])`
 - `router.get(url, [...handlers])`
 - `router.head(url, [...handlers])`
@@ -263,7 +262,6 @@ Key                        | Type       | Default Value
 - `router.patch(url, [...handlers])`
 - `router.post(url, [...handlers])`
 - `router.put(url, [...handlers])`
-- `router.trace(url, [...handlers])`
 
 
 #### `url` (string)
