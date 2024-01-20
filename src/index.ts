@@ -176,17 +176,6 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 	}
 
 	/**
-	* Register CONNECT route
-	*
-	* @param {string} url
-	* @param  {RouterHandler[]} handlers
-	* @returns {Router}
-	*/
-	public connect(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
-		return this.register('CONNECT', url, handlers)
-	}
-
-	/**
 	* Register DELETE route
 	*
 	* @param {string} url
@@ -261,17 +250,6 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 	*/
 	public put(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
 		return this.register('PUT', url, handlers)
-	}
-
-	/**
-	* Register TRACE route
-	*
-	* @param {string} url
-	* @param  {RouterHandler[]} handlers
-	* @returns {Router}
-	*/
-	public trace(url: string, ...handlers: RouterHandler<Env, CtxExt, ReqExt>[]): Router<Env, CtxExt, ReqExt> {
-		return this.register('TRACE', url, handlers)
 	}
 
 	/**
