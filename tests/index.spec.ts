@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import { Router } from '.'
+import { Router } from '..'
 
 describe('Router', () => {
 	test('use', async () => {
