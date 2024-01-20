@@ -185,8 +185,7 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 	}
 
 	/**
-
-	* Register group routers
+ 	* Register group routers
 	*
 	* @param {Router[]} routers
 	* @returns {Router}
@@ -201,7 +200,8 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 		return this
 	}
 
-	/* Register DELETE route
+	/**
+ 	* Register DELETE route
 	*
 	* @param {string} url
 	* @param  {RouterHandler[]} handlers
