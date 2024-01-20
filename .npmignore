@@ -1,7 +1,10 @@
+.editorconfig
 .github/
+.gitignore
+.nvmrc
+coverage/
+jest.config.ts
+MIGRATION.md
 src/
 tests/
-.nvmrc
-MIGRATION.md
 tsconfig.json
-.editorconfig
