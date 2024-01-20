@@ -167,21 +167,6 @@ describe('Router', () => {
 		expect(await response.text()).toBe('success')
 	})
 
-	//test('getRoute', async () => {
-	//	const router = new Router()
-	//	const testRequest = new Request('https://example.com/', { method: 'GET' })
-	//	const testResponse = new Response('https://example.com/', { status: 200 })
-	//	const testHandler = () => testResponse
-
-	//	expect(router.cors()).toBeInstanceOf(Router)
-
-	//	router.get('/', testHandler)
-
-	//	const response = await router.handle(testRequest, {})
-
-	//	expect(response.status).toBe(200)
-	//})
-
 	test('params', async () => {
 		const router = new Router()
 		const testRequest = new Request('https://example.com/bar/foo')
@@ -212,6 +197,43 @@ describe('Router', () => {
 		expect(await response.json()).toMatchObject({ foo: 'bar', bar: 'foo' })
 	})
 
+	test('404', async () => {
+		const router = new Router()
+		const testRequest = new Request('https://example.com/')
+
+		const response = await router.handle(testRequest, {})
+
+		expect(response.status).toEqual(404)
+	})
+
+	test('debug mode', async () => {
+		const router = new Router()
+		const testRequest = new Request('https://example.com/')
+
+		router.debug()
+
+		const response = await router.handle(testRequest, {})
+
+		expect(response.status).toEqual(404)
+
+		expect(await response.text()).toBe('Route not found!')
+	})
+
+	test('handler no response', async () => {
+		const router = new Router()
+		const testRequest = new Request('https://example.com/')
+
+		router.debug()
+
+		router.get('/', () => {})
+
+		const response = await router.handle(testRequest, {})
+
+		expect(response.status).toEqual(404)
+
+		expect(await response.text()).toBe('Handler did not return a Response!')
+	})
+
 	test('wildcard', async () => {
 		const router = new Router()
 		const testRequest = new Request('https://example.com/foo/bar')
@@ -239,7 +261,6 @@ describe('Router', () => {
 
 		expect(await response.text()).toBe(testToken)
 	})
-
 })
 
 describe('Middleware', () => {
@@ -271,6 +292,42 @@ describe('Middleware', () => {
 })
 
 describe('Body', () => {
+
+	test('text then text', async () => {
+		const router = new Router()
+		const testText = "lorem ipsum dolor sit amet"
+		const testRequest = new Request('https://example.com/', { method: 'POST', body: testText })
+
+		router.post('/', async ({ req }) => {
+			return Response.json({
+				text: await req.text(),
+				text2: await req.text()
+			})
+		})
+
+		const response = await router.handle(testRequest, {})
+
+		expect(await response.json()).toMatchObject({ text: testText, text2: testText })
+	})
+
+	test('json then json', async () => {
+		const router = new Router()
+		const testObject = { text: 'cloudflare-worker-router', binary: true, amount: 17 }
+		const testJson = JSON.stringify(testObject)
+		const testRequest = new Request('https://example.com/', { method: 'POST', body: testJson })
+
+		router.post('/', async ({ req }) => {
+			return Response.json({
+				json: await req.json(),
+				json2: await req.json()
+			})
+		})
+
+		const response = await router.handle(testRequest, {})
+
+		expect(await response.json()).toMatchObject({ json: testObject, json2: testObject })
+	})
+
 	test('text then json', async () => {
 		const router = new Router()
 		const testObject = { text: 'cloudflare-worker-router', binary: true, amount: 17 }
