@@ -1,6 +1,6 @@
 .github/
 src/
-test/
+tests/
 .nvmrc
 MIGRATION.md
 tsconfig.json
