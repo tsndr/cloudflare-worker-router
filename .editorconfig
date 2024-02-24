@@ -11,3 +11,7 @@ indent_style = tab
 [README.md]
 indent_style = space
 indent_size = 4
+
+[{package,package-lock}.json]
+indent_style = space
+indent_size = 2

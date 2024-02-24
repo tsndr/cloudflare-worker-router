@@ -14,11 +14,10 @@
     "url": "git+https://github.com/tsndr/cloudflare-worker-router.git"
   },
   "keywords": [
+    "api",
     "cloudflare",
     "cloudflare-worker",
     "cloudflare-workers",
-    "express",
-    "expressjs",
     "framework",
     "middleware",
     "router",
