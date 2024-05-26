@@ -407,10 +407,12 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 
 		const route = this.getRoute(req)
 
-		if (!route)
+		const routeHandler = route ? route.handlers : []
+		const notFoundHandler: RouterHandler<Env, CtxExt, ReqExt> = () => {
 			return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
+		}
 
-		const handlers = [...this.globalHandlers, ...route.handlers]
+		const handlers = [...this.globalHandlers, ...routeHandler, notFoundHandler]
 		const dbg = this.debugMode
 
 		let response: Response | undefined
