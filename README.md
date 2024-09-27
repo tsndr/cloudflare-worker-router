@@ -292,7 +292,7 @@ wrangler init <name>
 Use of TypeScript is strongly encouraged :)
 
 ```bash
-npm i -D @tsndr/cloudflare-worker-router
+npm i @tsndr/cloudflare-worker-router
 ```
 
 
