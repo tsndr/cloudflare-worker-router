@@ -406,34 +406,37 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 		}
 
 		const route = this.getRoute(req)
-
-		if (!route)
-			return new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
-
-		const handlers = [...this.globalHandlers, ...route.handlers]
-		const dbg = this.debugMode
-
 		let response: Response | undefined
 
-		for (const handler of handlers) {
-			const context = {
-				...(ctxExt ?? {}),
-				env,
-				req,
-				dbg,
-				ctx
-			} as RouterContext<Env, CtxExt, ReqExt>
+		if (!route)
+			response = new Response(this.debugMode ? 'Route not found!' : null, { status: 404 })
 
-			const res = await handler(context)
+		if (!response) {
+			const handlers = [
+				...this.globalHandlers,
+				...(route?.handlers ?? [])
+			]
 
-			if (res) {
-				response = res
-				break
+			for (const handler of handlers) {
+				const context = {
+					...(ctxExt ?? {}),
+					env,
+					req,
+					dbg: this.debugMode,
+					ctx
+				} as RouterContext<Env, CtxExt, ReqExt>
+
+				const res = await handler(context)
+
+				if (res) {
+					response = res
+					break
+				}
 			}
 		}
 
 		if (!response)
-			return new Response(this.debugMode ? 'Handler did not return a Response!' : null, { status: 404 })
+			response = new Response(this.debugMode ? 'Handler did not return a Response!' : null, { status: 404 })
 
 		if (this.corsEnabled) {
 			response = new Response(response.body, response)
