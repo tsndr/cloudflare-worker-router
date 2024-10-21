@@ -1,10 +1,11 @@
 {
     "compilerOptions": {
         "outDir": ".",
-        "module": "commonjs",
+        "module": "esnext",
         "target": "esnext",
         "lib": ["esnext"],
         "declaration": true,
+        "emitDeclarationOnly": true,
         "strict": true,
         "noImplicitAny": true,
         "strictNullChecks": true,
@@ -15,6 +16,7 @@
         "alwaysStrict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+        "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "esModuleInterop": true,
         "preserveConstEnums": true,
