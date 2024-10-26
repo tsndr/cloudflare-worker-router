@@ -18,8 +18,9 @@ When I was trying out Cloudflare Workers I almost immediately noticed how fast i
 - ZERO dependencies
 - Lightweight (1.0K gzipped)
 - Fully written in TypeScript
-- Integrated Debug-Mode & CORS helper
 - Built specifically around Middlewares
+- Debug-Mode, CORS and Bearer helpers
+- Allows accessing request body multiple times
 
 
 ## Usage
