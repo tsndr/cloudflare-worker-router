@@ -261,6 +261,21 @@ describe('Router', () => {
 
 		expect(await response.text()).toBe(testToken)
 	})
+
+	test('basic', async () => {
+		const router = new Router()
+		const testCredentials = ['user', 'password']
+		const testBasicAuth = btoa(testCredentials.join(':'))
+		const testRequest = new Request('https://example.com/', { headers: { 'Authorization': `Basic ${testBasicAuth}` }})
+
+		router.get('/', ({ req }) => Response.json(req.basic()))
+
+		const response = await router.handle(testRequest, {})
+
+		expect(response.status).toEqual(200)
+
+		expect(await response.json()).toMatchObject(testCredentials)
+	})
 })
 
 describe('Middleware', () => {

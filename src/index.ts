@@ -52,6 +52,7 @@ export type RouterRequest<ReqExt> = ReqExt & {
 	formData(): Promise<FormData>
 	blob(): Promise<Blob>
 	bearer(): string | undefined
+	basic(): [string, string]
 	cf?: IncomingRequestCfProperties
 }
 
@@ -396,6 +397,7 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 			formData: async (): Promise<FormData> => buffer.formData ? buffer.formData : buffer.formData = await request.clone().formData(),
 			blob: async (): Promise<Blob> => buffer.blob ? buffer.blob : buffer.blob = await request.clone().blob(),
 			bearer: () => request.headers.get('Authorization')?.replace(/^[Bb]earer\s/, '').trim(),
+			basic: () => (atob(request.headers.get('Authorization')?.replace(/^[Bb]asic\s/, '').trim() ?? '') || undefined)?.split(':')
 		} as RouterRequest<ReqExt>
 
 		if (this.corsEnabled && req.method === 'OPTIONS') {
