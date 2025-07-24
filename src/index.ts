@@ -395,7 +395,7 @@ export class Router<Env = any, CtxExt = {}, ReqExt = {}> {
 			json: async <T>(): Promise<T> => buffer.json ? buffer.json : buffer.json = await request.clone().json<T>(),
 			formData: async (): Promise<FormData> => buffer.formData ? buffer.formData : buffer.formData = await request.clone().formData(),
 			blob: async (): Promise<Blob> => buffer.blob ? buffer.blob : buffer.blob = await request.clone().blob(),
-			bearer: () => request.headers.get('Authorization')?.replace(/^(B|b)earer /, '').trim()
+			bearer: () => request.headers.get('Authorization')?.replace(/^[Bb]earer\s/, '').trim(),
 		} as RouterRequest<ReqExt>
 
 		if (this.corsEnabled && req.method === 'OPTIONS') {
