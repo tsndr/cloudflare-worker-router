@@ -28,9 +28,8 @@ jobs:
         run: npm run build
 
       - name: Publish to npmjs
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --tag ${{ contains(github.ref_name, '-') && 'pre' || 'latest' }} --provenance --access public
+        continue-on-error: true
 
       - uses: actions/setup-node@v3
         with:
