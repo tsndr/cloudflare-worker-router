@@ -8,6 +8,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -27,7 +30,7 @@ jobs:
       - name: Publish to npmjs
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --tag ${{ contains(github.ref_name, '-') && 'pre' || 'latest' }} --access public
+        run: npm publish --tag ${{ contains(github.ref_name, '-') && 'pre' || 'latest' }} --provenance --access public
 
       - uses: actions/setup-node@v3
         with:
