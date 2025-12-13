@@ -32,9 +32,9 @@
   },
   "homepage": "https://github.com/tsndr/cloudflare-worker-router#readme",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250724.0",
+    "@cloudflare/workers-types": "^4.20251213.0",
     "@edge-runtime/vm": "^5.0.0",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
   }
 }
