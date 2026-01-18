@@ -27,6 +27,10 @@ When I was trying out Cloudflare Workers I almost immediately noticed how fast i
 
 Migrating from `v2.x.x`, check out the [Migration Guide](MIGRATION.md).
 
+```shell
+npm install @tsndr/cloudflare-worker-router
+```
+
 ### TypeScript Example
 
 ```typescript
